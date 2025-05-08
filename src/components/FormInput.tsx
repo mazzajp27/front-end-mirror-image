@@ -10,6 +10,7 @@ interface FormInputProps {
   required?: boolean;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  mask?: string;
 }
 
 const FormInput: React.FC<FormInputProps> = ({ 
@@ -19,7 +20,8 @@ const FormInput: React.FC<FormInputProps> = ({
   placeholder, 
   required = false,
   value,
-  onChange
+  onChange,
+  mask
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === 'password' && showPassword ? 'text' : type;
@@ -53,14 +55,6 @@ const FormInput: React.FC<FormInputProps> = ({
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        )}
-        {type === 'tel' && (
-          <button
-            type="button"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-          >
-            <Eye size={18} />
           </button>
         )}
       </div>

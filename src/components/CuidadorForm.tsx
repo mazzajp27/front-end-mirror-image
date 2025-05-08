@@ -72,10 +72,17 @@ const CuidadorForm = () => {
     { value: 'prefiro-nao-informar', label: 'Prefiro não informar' }
   ];
 
+  const steps = [
+    { name: "Dados Pessoais", number: 1 },
+    { name: "Endereço", number: 2 },
+    { name: "Questionário", number: 3 },
+    { name: "Hobbies", number: 4 }
+  ];
+
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
       <FormHeader />
-      <StepIndicator currentStep={1} />
+      <StepIndicator currentStep={1} steps={steps} />
       
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

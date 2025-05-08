@@ -72,17 +72,19 @@ const CuidadorForm: React.FC = () => {
     }
   };
 
+  const steps = [
+    { name: "Dados", number: 1 },
+    { name: "Endereço", number: 2 },
+    { name: "Questionário", number: 3 },
+    { name: "Hobbies", number: 4 }
+  ];
+
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
       <FormHeader title="Formulário Cuidador" />
       <StepIndicator 
         currentStep={currentStep} 
-        steps={[
-          { name: "Dados", number: 1 },
-          { name: "Endereço", number: 2 },
-          { name: "Questionário", number: 3 },
-          { name: "Hobbies", number: 4 }
-        ]} 
+        steps={steps} 
       />
       
       {renderStep()}

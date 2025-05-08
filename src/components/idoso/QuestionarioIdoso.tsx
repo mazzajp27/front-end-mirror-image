@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { IdosoData } from '../../services/api';
@@ -24,8 +23,9 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
     quaisMedicamentos: data.historicoMedico?.quaisMedicamentos || '',
   });
 
+  // Change from true to boolean to fix the type error
   const [atividadesDiarias, setAtividadesDiarias] = useState({
-    realizaSozinho: data.atividadesDiarias?.realizaSozinho || true,
+    realizaSozinho: data.atividadesDiarias?.realizaSozinho || false,
     quaisAtividadesPrecisaAjuda: data.atividadesDiarias?.quaisAtividadesPrecisaAjuda || '',
   });
 
