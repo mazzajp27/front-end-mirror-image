@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-// Defina a URL base da sua API aqui
+// Define a URL base da API
 const API_BASE_URL = 'https://sua-api-amigo-cuidador.com/api';
 
 // Crie uma instância do axios com configurações padrão
@@ -21,6 +21,147 @@ export interface CuidadorData {
   telefone: string;
   genero: string;
   senha: string;
+  // Endereço
+  estado?: string;
+  cidade?: string;
+  endereco?: string;
+  bairro?: string;
+  cep?: string;
+  numero?: string;
+  complemento?: string;
+  referencia?: string;
+  // Questionário
+  formacaoAcademica?: {
+    cursos?: string;
+    instituicao?: string;
+    area?: string;
+  };
+  experienciaProfissional?: {
+    tempoExperiencia?: string;
+    responsabilidades?: string;
+    possuiCertificacao?: boolean;
+    certificacoes?: string;
+  };
+  qualidades?: {
+    habilidades?: string[];
+    horariosDisponiveis?: string;
+    disponibilidadePlantoes?: boolean;
+    qualidadesImportantes?: string;
+  };
+  referencias?: {
+    nomeContato?: string;
+  };
+  // Hobbies
+  interesses?: {
+    atividadesTempo?: string[];
+    atividadesManuais?: {
+      gosta: boolean;
+      quais?: string;
+    };
+    prefCulturais?: {
+      generosMusicais?: string;
+      filmesTV?: string;
+      atividadesSociais?: {
+        participa: boolean;
+        quais?: string;
+      };
+    };
+    habilidadesPreferencias?: {
+      gostaEnsinar?: {
+        gosta: boolean;
+        oquePoderia?: string;
+      };
+      interesseTecnologia?: {
+        interessado: boolean;
+        quais?: string;
+      };
+    };
+    comentarios?: string;
+  };
+}
+
+// Interface para tipagem dos dados do idoso/contratante
+export interface IdosoData {
+  nome: string;
+  cpf: string;
+  email: string;
+  cep: string;
+  telefone: string;
+  genero: string;
+  senha: string;
+  // Endereço
+  estado?: string;
+  cidade?: string;
+  endereco?: string;
+  bairro?: string;
+  numero?: string;
+  complemento?: string;
+  referencia?: string;
+  // Questionário
+  historicoMedico?: {
+    condicaoMedica?: string;
+    qualCondicao?: string;
+    tomaMedicamento?: boolean;
+    quaisMedicamentos?: string;
+  };
+  atividadesDiarias?: {
+    realizaSozinho?: boolean;
+    quaisAtividadesPrecisaAjuda?: string;
+  };
+  familiaApoio?: {
+    visitasFrequentes?: boolean;
+    frequenciaVisitas?: string;
+  };
+  qualidadesPreferencias?: {
+    principaisQualidades?: string;
+    expectativasCuidador?: string;
+  };
+  deficienciasNecessidades?: {
+    possuiDeficiencia?: boolean;
+    qualDeficiencia?: string;
+    informacoesAdicionais?: string;
+  };
+  // Hobbies
+  interesses?: {
+    atividadesTempo?: string[];
+    praticaEsporte?: {
+      pratica: boolean;
+      quais?: string;
+    };
+    atividadesManuais?: {
+      gosta: boolean;
+      quais?: string;
+    };
+    interesseAprender?: {
+      interessado: boolean;
+      oque?: string;
+    };
+    prefCulturais?: {
+      generosMusicais?: string;
+      filmesTV?: string;
+      atividadesSociais?: {
+        participa: boolean;
+        quais?: string;
+      };
+    };
+    habilidadesPreferencias?: {
+      gostaEnsinar?: {
+        gosta: boolean;
+        oquePoderia?: string;
+      };
+      interesseTecnologia?: {
+        interessado: boolean;
+        quais?: string;
+      };
+    };
+    comentarios?: string;
+  };
+}
+
+// Interface para tipagem dos dados de login
+export interface LoginData {
+  email: string;
+  senha: string;
 }
 
 // Serviço para cuidadores
@@ -32,6 +173,55 @@ export const cuidadorService = {
       return response.data;
     } catch (error) {
       console.error('Erro ao cadastrar cuidador:', error);
+      throw error;
+    }
+  },
+  
+  // Atualizar dados do cuidador
+  atualizar: async (id: string, cuidadorData: Partial<CuidadorData>) => {
+    try {
+      const response = await api.put(`/cuidadores/${id}`, cuidadorData);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao atualizar cuidador:', error);
+      throw error;
+    }
+  },
+};
+
+// Serviço para idosos/contratantes
+export const idosoService = {
+  // Cadastrar novo idoso/contratante
+  cadastrar: async (idosoData: IdosoData) => {
+    try {
+      const response = await api.post('/idosos', idosoData);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao cadastrar idoso/contratante:', error);
+      throw error;
+    }
+  },
+  
+  // Atualizar dados do idoso/contratante
+  atualizar: async (id: string, idosoData: Partial<IdosoData>) => {
+    try {
+      const response = await api.put(`/idosos/${id}`, idosoData);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao atualizar idoso/contratante:', error);
+      throw error;
+    }
+  },
+};
+
+// Serviço de autenticação
+export const authService = {
+  login: async (loginData: LoginData) => {
+    try {
+      const response = await api.post('/auth/login', loginData);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao realizar login:', error);
       throw error;
     }
   },

@@ -1,9 +1,9 @@
 
 import React from 'react';
-import CuidadorForm from '../components/CuidadorForm';
+import LoginForm from '../components/LoginForm';
 
 const Index = () => {
-  return <CuidadorForm />;
+  return <LoginForm />;
 };
 
 export default Index;

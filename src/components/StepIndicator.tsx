@@ -1,25 +1,24 @@
 
 import React from 'react';
 
-interface StepIndicatorProps {
-  currentStep: number;
+interface Step {
+  name: string;
+  number: number;
 }
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
-  const steps = [
-    { name: 'Dados', number: 1 },
-    { name: 'Endereço', number: 2 },
-    { name: 'Questionário', number: 3 },
-    { name: 'Hobbies', number: 4 }
-  ];
+interface StepIndicatorProps {
+  currentStep: number;
+  steps: Step[];
+}
 
+const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, steps }) => {
   return (
     <div className="flex items-center justify-center mb-10">
       {steps.map((step, index) => (
         <React.Fragment key={step.number}>
           <div className="flex flex-col items-center">
             <div className={`step-indicator ${currentStep === step.number ? 'step-active' : 'step-inactive'}`}>
-              {step.number === 1 && currentStep === 1 ? step.number : ''}
+              {step.number}
             </div>
             <span className="mt-2 text-sm">{step.name}</span>
           </div>

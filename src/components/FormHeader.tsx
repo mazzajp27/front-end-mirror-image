@@ -1,7 +1,11 @@
 
 import React from 'react';
 
-const FormHeader = () => {
+interface FormHeaderProps {
+  title?: string;
+}
+
+const FormHeader: React.FC<FormHeaderProps> = ({ title = "Formulário Cuidador" }) => {
   return (
     <div className="flex flex-col items-center mb-8">
       <div className="mb-4">
@@ -11,7 +15,7 @@ const FormHeader = () => {
           className="h-16"
         />
       </div>
-      <h1 className="text-3xl font-bold text-[#0056a4] text-center">Formulário Cuidador</h1>
+      <h1 className="text-3xl font-bold text-[#0056a4] text-center">{title}</h1>
     </div>
   );
 };
