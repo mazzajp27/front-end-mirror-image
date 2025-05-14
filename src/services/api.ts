@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Define a URL base da API
@@ -80,14 +79,16 @@ export interface CuidadorData {
   };
 }
 
-// Interface para tipagem dos dados do idoso/contratante
+// Interface para tipagem dos dados do contratante
 export interface IdosoData {
   nome: string;
   cpf: string;
   email: string;
   cep: string;
   telefone: string;
+  telefone_emergencia: string;
   genero: string;
+  data_nascimento: string;
   senha: string;
   // Endereço
   estado?: string;
@@ -189,26 +190,26 @@ export const cuidadorService = {
   },
 };
 
-// Serviço para idosos/contratantes
+// Serviço para contratantes
 export const idosoService = {
-  // Cadastrar novo idoso/contratante
+  // Cadastrar novo contratante
   cadastrar: async (idosoData: IdosoData) => {
     try {
-      const response = await api.post('/idosos', idosoData);
+      const response = await api.post('/contratantes', idosoData);
       return response.data;
     } catch (error) {
-      console.error('Erro ao cadastrar idoso/contratante:', error);
+      console.error('Erro ao cadastrar contratante:', error);
       throw error;
     }
   },
   
-  // Atualizar dados do idoso/contratante
+  // Atualizar dados do contratante
   atualizar: async (id: string, idosoData: Partial<IdosoData>) => {
     try {
-      const response = await api.put(`/idosos/${id}`, idosoData);
+      const response = await api.put(`/contratantes/${id}`, idosoData);
       return response.data;
     } catch (error) {
-      console.error('Erro ao atualizar idoso/contratante:', error);
+      console.error('Erro ao atualizar contratante:', error);
       throw error;
     }
   },

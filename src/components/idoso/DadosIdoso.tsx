@@ -36,7 +36,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
     }
     
     // Validar campos obrigatórios
-    if (!data.nome || !data.cpf || !data.email || !data.telefone || !data.genero || !data.senha) {
+    if (!data.nome || !data.cpf || !data.email || !data.telefone || !data.genero || !data.senha || !data.data_nascimento) {
       toast.error("Por favor, preencha todos os campos obrigatórios!");
       return;
     }
@@ -84,13 +84,12 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
         />
         
         <FormInput 
-          label="CEP"
-          type="text"
-          id="cep"
+          label="Data de Nascimento"
+          type="date"
+          id="data_nascimento"
           required
-          value={data.cep}
+          value={data.data_nascimento}
           onChange={handleChange}
-          mask="99999-999"
         />
         
         <FormInput 
@@ -99,6 +98,16 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           id="telefone"
           required
           value={data.telefone}
+          onChange={handleChange}
+          mask="(99) 99999-9999"
+        />
+        
+        <FormInput 
+          label="Telefone de Emergência"
+          type="tel"
+          id="telefone_emergencia"
+          required
+          value={data.telefone_emergencia || ''}
           onChange={handleChange}
           mask="(99) 99999-9999"
         />

@@ -19,7 +19,9 @@ const IdosoForm: React.FC = () => {
     email: '',
     cep: '',
     telefone: '',
+    telefone_emergencia: '',
     genero: '',
+    data_nascimento: '',
     senha: ''
   });
 
@@ -81,7 +83,7 @@ const IdosoForm: React.FC = () => {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
-      <FormHeader title="Formulário Idoso" />
+      <FormHeader title="Formulário Contratante" />
       <StepIndicator currentStep={currentStep} steps={steps} />
       
       {renderStep()}
