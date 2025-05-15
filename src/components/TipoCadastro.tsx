@@ -23,14 +23,6 @@ const TipoCadastro: React.FC = () => {
           </button>
         </div>
         
-        <div className="md:mx-8">
-          <img 
-            src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
-            alt="Amigo Cuidador Logo" 
-            className="h-24"
-          />
-        </div>
-        
         <div className="flex-1 flex justify-center">
           <button 
             onClick={() => navigate('/cadastro/idoso')} 

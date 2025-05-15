@@ -12,7 +12,7 @@ const SobreNosPage: React.FC = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/5a39454b-b30c-4703-9a08-fb4ca441e2b9.png" 
+              src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
               className="h-12"
             />
@@ -30,7 +30,7 @@ const SobreNosPage: React.FC = () => {
               Cadastra-se
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/login')}
               className="flex items-center gap-2 text-[#0056a4] hover:text-[#003d74]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -46,13 +46,7 @@ const SobreNosPage: React.FC = () => {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-[#0056a4] mb-6">Sobre Nós</h1>
         
-        <div className="mb-8">
-          <img 
-            src="/lovable-uploads/abed7ee4-83b4-4817-add9-aa5b305f66c3.png" 
-            alt="Equipe Amigo Cuidador" 
-            className="w-full h-auto rounded-lg mb-6"
-          />
-          
+        <div className="mb-8">          
           <h2 className="text-2xl font-semibold text-[#0056a4] mb-4">Nossa História</h2>
           <p className="text-gray-700 mb-4">
             O Amigo Cuidador nasceu da percepção de que muitas famílias enfrentam dificuldades para cuidar 

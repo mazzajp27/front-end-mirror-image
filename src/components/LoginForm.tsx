@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -48,16 +49,13 @@ const LoginForm: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-[#0056a4] mb-2">Amigo Cuidador</h1>
-          <p className="text-lg font-medium text-[#0056a4]">CUIDANDO DE QUEM SEMPRE CUIDOU DE VOCÊ</p>
           <div className="mt-6">
             <img 
               src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
-              className="h-20 mx-auto"
+              className="h-32 mx-auto"
             />
           </div>
-          <h2 className="text-2xl font-semibold mt-6 text-[#0056a4]">Login</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">

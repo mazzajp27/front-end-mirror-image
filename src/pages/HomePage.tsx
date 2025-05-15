@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
             <img 
               src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
-              className="h-12"
+              className="h-16"
             />
           </div>
           
