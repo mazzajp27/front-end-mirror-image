@@ -42,7 +42,7 @@ const FormInput: React.FC<FormInputProps> = ({
         <input
           type={inputType}
           id={id}
-          className="form-input"
+          className="form-input w-full rounded-md border border-gray-300 px-4 py-2"
           placeholder={placeholder}
           required={required}
           value={value}

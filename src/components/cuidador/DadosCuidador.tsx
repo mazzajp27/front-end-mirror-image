@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import FormInput from '../FormInput';
 import SelectInput from '../SelectInput';
 import { CuidadorData } from '../../services/api';
@@ -13,8 +14,7 @@ interface DadosCuidadorProps {
 }
 
 const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -42,6 +42,10 @@ const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext 
     }
 
     onNext();
+  };
+
+  const handleGoBack = () => {
+    navigate('/tipo-cadastro');
   };
 
   const generoOptions = [
@@ -111,50 +115,35 @@ const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext 
           onChange={handleChange}
         />
         
-        <div className="relative">
-          <FormInput 
-            label="Senha"
-            type={showPassword ? "text" : "password"}
-            id="senha"
-            required
-            value={data.senha}
-            onChange={handleChange}
-          />
-          <button 
-            type="button"
-            className="absolute right-3 top-9 text-gray-500"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </button>
-        </div>
+        <FormInput 
+          label="Senha"
+          type="password"
+          id="senha"
+          required
+          value={data.senha}
+          onChange={handleChange}
+        />
         
-        <div className="relative">
-          <FormInput 
-            label="Confirmar Senha"
-            type={showConfirmPassword ? "text" : "password"}
-            id="confirmarSenha"
-            required
-            value={confirmarSenha}
-            onChange={handleConfirmPasswordChange}
-          />
-          <button 
-            type="button"
-            className="absolute right-3 top-9 text-gray-500"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </button>
-        </div>
+        <FormInput 
+          label="Confirmar Senha"
+          type="password"
+          id="confirmarSenha"
+          required
+          value={confirmarSenha}
+          onChange={handleConfirmPasswordChange}
+        />
       </div>
       
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-between mt-10">
+        <button 
+          type="button"
+          onClick={handleGoBack}
+          className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
+        >
+          <ArrowLeft size={18} />
+          Voltar
+        </button>
+
         <button 
           type="submit" 
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
