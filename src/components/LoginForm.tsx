@@ -123,6 +123,15 @@ const LoginForm: React.FC = () => {
             </a>
           </p>
         </div>
+        
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => navigate('/')}
+            className="text-[#0056a4] hover:underline text-sm"
+          >
+            Voltar para a página inicial
+          </button>
+        </div>
       </div>
     </div>
   );
