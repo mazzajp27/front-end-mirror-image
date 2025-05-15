@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Define a URL base da API
-const API_BASE_URL = 'https://sua-api-amigo-cuidador.com/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 // Crie uma instância do axios com configurações padrão
 const api = axios.create({
@@ -80,83 +80,15 @@ export interface CuidadorData {
 }
 
 // Interface para tipagem dos dados do contratante
-export interface IdosoData {
+export interface ContratanteData {
   nome: string;
   cpf: string;
   email: string;
-  cep: string;
   telefone: string;
-  telefone_emergencia: string;
-  genero: string;
-  data_nascimento: string;
+  telefone_emergencia?: string;
   senha: string;
-  // Endereço
-  estado?: string;
-  cidade?: string;
-  endereco?: string;
-  bairro?: string;
-  numero?: string;
-  complemento?: string;
-  referencia?: string;
-  // Questionário
-  historicoMedico?: {
-    condicaoMedica?: string;
-    qualCondicao?: string;
-    tomaMedicamento?: boolean;
-    quaisMedicamentos?: string;
-  };
-  atividadesDiarias?: {
-    realizaSozinho?: boolean;
-    quaisAtividadesPrecisaAjuda?: string;
-  };
-  familiaApoio?: {
-    visitasFrequentes?: boolean;
-    frequenciaVisitas?: string;
-  };
-  qualidadesPreferencias?: {
-    principaisQualidades?: string;
-    expectativasCuidador?: string;
-  };
-  deficienciasNecessidades?: {
-    possuiDeficiencia?: boolean;
-    qualDeficiencia?: string;
-    informacoesAdicionais?: string;
-  };
-  // Hobbies
-  interesses?: {
-    atividadesTempo?: string[];
-    praticaEsporte?: {
-      pratica: boolean;
-      quais?: string;
-    };
-    atividadesManuais?: {
-      gosta: boolean;
-      quais?: string;
-    };
-    interesseAprender?: {
-      interessado: boolean;
-      oque?: string;
-    };
-    prefCulturais?: {
-      generosMusicais?: string;
-      filmesTV?: string;
-      atividadesSociais?: {
-        participa: boolean;
-        quais?: string;
-      };
-    };
-    habilidadesPreferencias?: {
-      gostaEnsinar?: {
-        gosta: boolean;
-        oquePoderia?: string;
-      };
-      interesseTecnologia?: {
-        interessado: boolean;
-        quais?: string;
-      };
-    };
-    comentarios?: string;
-  };
+  genero?: string;
+  data_nascimento?: string;
 }
 
 // Interface para tipagem dos dados de login
@@ -191,28 +123,61 @@ export const cuidadorService = {
 };
 
 // Serviço para contratantes
-export const idosoService = {
+export const contratanteService = {
   // Cadastrar novo contratante
-  cadastrar: async (idosoData: IdosoData) => {
+  cadastrar: async (contratanteData: ContratanteData) => {
     try {
-      const response = await api.post('/contratantes', idosoData);
+      const response = await api.post('/contratante/', contratanteData);
       return response.data;
     } catch (error) {
       console.error('Erro ao cadastrar contratante:', error);
       throw error;
     }
   },
+
+  // Listar todos os contratantes
+  listarTodos: async () => {
+    try {
+      const response = await api.get('/contratantes/');
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao listar contratantes:', error);
+      throw error;
+    }
+  },
+
+  // Buscar contratante por ID
+  buscarPorId: async (id: number) => {
+    try {
+      const response = await api.get(`/contratantes/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar contratante:', error);
+      throw error;
+    }
+  },
   
   // Atualizar dados do contratante
-  atualizar: async (id: string, idosoData: Partial<IdosoData>) => {
+  atualizar: async (id: number, contratanteData: Partial<ContratanteData>) => {
     try {
-      const response = await api.put(`/contratantes/${id}`, idosoData);
+      const response = await api.put(`/contratante/${id}`, contratanteData);
       return response.data;
     } catch (error) {
       console.error('Erro ao atualizar contratante:', error);
       throw error;
     }
   },
+
+  // Deletar contratante
+  deletar: async (id: number) => {
+    try {
+      const response = await api.delete(`/contratante/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao deletar contratante:', error);
+      throw error;
+    }
+  }
 };
 
 // Serviço de autenticação

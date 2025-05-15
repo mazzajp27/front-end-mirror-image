@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FormInput from '../FormInput';
 import SelectInput from '../SelectInput';
-import { IdosoData } from '../../services/api';
+import { ContratanteData } from '../../services/api';
 import { toast } from 'sonner';
 
 interface DadosIdosoProps {
-  data: IdosoData;
-  updateData: (data: Partial<IdosoData>) => void;
+  data: ContratanteData;
+  updateData: (data: Partial<ContratanteData>) => void;
   onNext: () => void;
 }
 
@@ -36,8 +35,34 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
     }
     
     // Validar campos obrigatórios
-    if (!data.nome || !data.cpf || !data.email || !data.telefone || !data.genero || !data.senha || !data.data_nascimento) {
+    if (!data.nome || !data.cpf || !data.email || !data.telefone || !data.senha) {
       toast.error("Por favor, preencha todos os campos obrigatórios!");
+      return;
+    }
+
+    // Validar formato do CPF
+    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!cpfRegex.test(data.cpf)) {
+      toast.error("CPF inválido! Use o formato: 000.000.000-00");
+      return;
+    }
+
+    // Validar formato do email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      toast.error("E-mail inválido!");
+      return;
+    }
+
+    // Validar formato do telefone
+    const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+    if (!telefoneRegex.test(data.telefone)) {
+      toast.error("Telefone inválido! Use o formato: (00) 00000-0000");
+      return;
+    }
+
+    if (data.telefone_emergencia && !telefoneRegex.test(data.telefone_emergencia)) {
+      toast.error("Telefone de emergência inválido! Use o formato: (00) 00000-0000");
       return;
     }
 
@@ -91,8 +116,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           label="Data de Nascimento"
           type="date"
           id="data_nascimento"
-          required
-          value={data.data_nascimento}
+          value={data.data_nascimento || ''}
           onChange={handleChange}
         />
         
@@ -110,7 +134,6 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           label="Telefone de Emergência"
           type="tel"
           id="telefone_emergencia"
-          required
           value={data.telefone_emergencia || ''}
           onChange={handleChange}
           mask="(99) 99999-9999"
@@ -120,8 +143,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           label="Gênero"
           id="genero"
           options={generoOptions}
-          required
-          value={data.genero}
+          value={data.genero || ''}
           onChange={handleChange}
         />
         

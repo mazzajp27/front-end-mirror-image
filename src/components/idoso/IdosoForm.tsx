@@ -1,92 +1,74 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import FormHeader from '../FormHeader';
 import StepIndicator from '../StepIndicator';
-import { IdosoData, idosoService } from '../../services/api';
+import { ContratanteData, contratanteService } from '../../services/api';
 import DadosIdoso from './DadosIdoso';
-import EnderecoIdoso from './EnderecoIdoso';
-import QuestionarioIdoso from './QuestionarioIdoso';
-import HobbiesIdoso from './HobbiesIdoso';
 
 const IdosoForm: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<IdosoData>({
+  const [formData, setFormData] = useState<ContratanteData>({
     nome: '',
     cpf: '',
     email: '',
-    cep: '',
     telefone: '',
     telefone_emergencia: '',
+    senha: '',
     genero: '',
-    data_nascimento: '',
-    senha: ''
+    data_nascimento: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateFormData = (data: Partial<IdosoData>) => {
+  const updateFormData = (data: Partial<ContratanteData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
   const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-      window.scrollTo(0, 0);
-    }
+    // Como agora só temos uma etapa, vamos enviar o formulário diretamente
+    handleSubmit();
   };
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      await idosoService.cadastrar(formData);
+      
+      // Formatar a data antes de enviar (se existir)
+      const dataToSend = {
+        ...formData,
+        data_nascimento: formData.data_nascimento 
+          ? new Date(formData.data_nascimento).toISOString().split('T')[0]
+          : undefined
+      };
+
+      await contratanteService.cadastrar(dataToSend);
       toast.success("Cadastro realizado com sucesso!");
-      navigate('/');
+      navigate('/login'); // Redireciona para a página de login após o cadastro
     } catch (error: any) {
       console.error('Erro durante o cadastro:', error);
-      toast.error(error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.");
+      const errorMessage = error.response?.data?.detail || error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return <DadosIdoso data={formData} updateData={updateFormData} onNext={handleNext} />;
-      case 2:
-        return <EnderecoIdoso data={formData} updateData={updateFormData} onNext={handleNext} onPrevious={handlePrevious} />;
-      case 3:
-        return <QuestionarioIdoso data={formData} updateData={updateFormData} onNext={handleNext} onPrevious={handlePrevious} />;
-      case 4:
-        return <HobbiesIdoso data={formData} updateData={updateFormData} onPrevious={handlePrevious} onSubmit={handleSubmit} isSubmitting={isSubmitting} />;
-      default:
-        return <DadosIdoso data={formData} updateData={updateFormData} onNext={handleNext} />;
-    }
-  };
-
-  const steps = [
-    { name: "Dados", number: 1 },
-    { name: "Endereço", number: 2 },
-    { name: "Questionário", number: 3 },
-    { name: "Hobbies", number: 4 }
-  ];
-
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
-      <FormHeader title="Formulário Contratante" />
-      <StepIndicator currentStep={currentStep} steps={steps} />
+      <FormHeader title="Cadastro de Contratante" />
+      <div className="mb-8">
+        <p className="text-gray-600 text-center">
+          Preencha seus dados pessoais para criar sua conta
+        </p>
+      </div>
       
-      {renderStep()}
+      <DadosIdoso 
+        data={formData} 
+        updateData={updateFormData} 
+        onNext={handleNext}
+      />
     </div>
   );
 };
