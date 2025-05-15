@@ -25,7 +25,7 @@ const TipoCadastro: React.FC = () => {
         
         <div className="md:mx-8">
           <img 
-            src="/lovable-uploads/5a39454b-b30c-4703-9a08-fb4ca441e2b9.png" 
+            src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
             alt="Amigo Cuidador Logo" 
             className="h-24"
           />
@@ -44,14 +44,14 @@ const TipoCadastro: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-4 mt-8 w-full max-w-5xl px-4">
         <div className="flex-1">
           <img 
-            src="/lovable-uploads/6523d046-bb3c-42ec-b701-f2425ab7900a.png" 
+            src="/lovable-uploads/12b87f5c-30c6-4ef0-99dc-8ff0848721f5.png" 
             alt="Cuidador ajudando idoso" 
             className="w-full h-64 object-cover rounded-lg"
           />
         </div>
         <div className="flex-1">
           <img 
-            src="/lovable-uploads/abed7ee4-83b4-4817-add9-aa5b305f66c3.png" 
+            src="/lovable-uploads/615cf98a-4422-4ba1-b654-c3da368d534e.png" 
             alt="Idoso sorrindo" 
             className="w-full h-64 object-cover rounded-lg"
           />

@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/5a39454b-b30c-4703-9a08-fb4ca441e2b9.png" 
+              src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
               className="h-12"
             />
@@ -75,7 +75,7 @@ const HomePage: React.FC = () => {
           
           <div className="rounded-lg overflow-hidden">
             <img 
-              src="/lovable-uploads/6523d046-bb3c-42ec-b701-f2425ab7900a.png" 
+              src="/lovable-uploads/05f0d354-d346-42eb-b36f-87b02fe5e7df.png" 
               alt="Cuidador ajudando idoso" 
               className="w-full h-auto object-cover rounded-lg"
             />

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -53,7 +52,7 @@ const LoginForm: React.FC = () => {
           <p className="text-lg font-medium text-[#0056a4]">CUIDANDO DE QUEM SEMPRE CUIDOU DE VOCÊ</p>
           <div className="mt-6">
             <img 
-              src="/lovable-uploads/5a39454b-b30c-4703-9a08-fb4ca441e2b9.png" 
+              src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
               className="h-20 mx-auto"
             />

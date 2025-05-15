@@ -10,7 +10,7 @@ const FormHeader: React.FC<FormHeaderProps> = ({ title = "Formulário Cuidador" 
     <div className="flex flex-col items-center mb-8">
       <div className="mb-4">
         <img 
-          src="/lovable-uploads/5a39454b-b30c-4703-9a08-fb4ca441e2b9.png" 
+          src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
           alt="Amigo Cuidador Logo" 
           className="h-16"
         />
