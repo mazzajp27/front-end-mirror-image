@@ -16,9 +16,39 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
   const navigate = useNavigate();
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
+  const applyMask = (value: string, type: 'cpf' | 'phone'): string => {
+    // Remove todos os caracteres não numéricos
+    const numbers = value.replace(/\D/g, '');
+    
+    switch (type) {
+      case 'cpf':
+        if (numbers.length <= 3) return numbers;
+        if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+        if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+        return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
+      
+      case 'phone':
+        if (numbers.length <= 2) return numbers;
+        if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+        return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+      
+      default:
+        return value;
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    updateData({ [id]: value });
+    
+    // Aplica máscara baseado no tipo de campo
+    let formattedValue = value;
+    if (id === 'cpf') {
+      formattedValue = applyMask(value, 'cpf');
+    } else if (id === 'telefone' || id === 'telefone_emergencia') {
+      formattedValue = applyMask(value, 'phone');
+    }
+    
+    updateData({ [id]: formattedValue });
   };
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,10 +70,10 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
       return;
     }
 
-    // Validar formato do CPF
-    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    if (!cpfRegex.test(data.cpf)) {
-      toast.error("CPF inválido! Use o formato: 000.000.000-00");
+    // Validar formato do CPF (apenas verifica se tem 11 dígitos)
+    const cpfNumbers = data.cpf.replace(/\D/g, '');
+    if (cpfNumbers.length !== 11) {
+      toast.error("CPF inválido! Digite os 11 números do CPF.");
       return;
     }
 
@@ -54,16 +84,19 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
       return;
     }
 
-    // Validar formato do telefone
-    const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
-    if (!telefoneRegex.test(data.telefone)) {
-      toast.error("Telefone inválido! Use o formato: (00) 00000-0000");
+    // Validar formato do telefone (apenas verifica se tem 11 dígitos)
+    const telefoneNumbers = data.telefone.replace(/\D/g, '');
+    if (telefoneNumbers.length !== 11) {
+      toast.error("Telefone inválido! Digite os 11 números do telefone.");
       return;
     }
 
-    if (data.telefone_emergencia && !telefoneRegex.test(data.telefone_emergencia)) {
-      toast.error("Telefone de emergência inválido! Use o formato: (00) 00000-0000");
-      return;
+    if (data.telefone_emergencia) {
+      const telefoneEmergenciaNumbers = data.telefone_emergencia.replace(/\D/g, '');
+      if (telefoneEmergenciaNumbers.length !== 11) {
+        toast.error("Telefone de emergência inválido! Digite os 11 números do telefone.");
+        return;
+      }
     }
 
     onNext();
@@ -99,7 +132,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           required
           value={data.cpf}
           onChange={handleChange}
-          mask="999.999.999-99"
+          placeholder="Digite os 11 números do CPF"
         />
         
         <FormInput 
@@ -127,7 +160,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           required
           value={data.telefone}
           onChange={handleChange}
-          mask="(99) 99999-9999"
+          placeholder="Digite os 11 números do telefone"
         />
         
         <FormInput 
@@ -136,7 +169,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({ data, updateData, onNext }) => 
           id="telefone_emergencia"
           value={data.telefone_emergencia || ''}
           onChange={handleChange}
-          mask="(99) 99999-9999"
+          placeholder="Digite os 11 números do telefone"
         />
         
         <SelectInput 

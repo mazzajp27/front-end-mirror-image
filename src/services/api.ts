@@ -85,10 +85,25 @@ export interface ContratanteData {
   cpf: string;
   email: string;
   telefone: string;
-  telefone_emergencia?: string;
+  telefone_emergencia: string;
   senha: string;
-  genero?: string;
-  data_nascimento?: string;
+  genero: string;
+  data_nascimento: string;
+  // Endereço
+  estado: string;
+  cidade: string;
+  endereco: string;
+  bairro: string;
+  cep: string;
+  numero: string;
+  complemento: string;
+  // Questionário
+  estado_civil?: string;
+  profissao?: string;
+  renda_mensal?: string;
+  observacoes?: string;
+  // Hobbies
+  hobbies?: string[];
 }
 
 // Interface para tipagem dos dados de login

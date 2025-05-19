@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import FormInput from '../FormInput';
-import { IdosoData } from '../../services/api';
+import SelectInput from '../SelectInput';
+import { ContratanteData } from '../../services/api';
 import { toast } from 'sonner';
 
 interface EnderecoIdosoProps {
-  data: IdosoData;
-  updateData: (data: Partial<IdosoData>) => void;
+  data: ContratanteData;
+  updateData: (data: Partial<ContratanteData>) => void;
   onNext: () => void;
   onPrevious: () => void;
 }
@@ -22,21 +22,58 @@ const EnderecoIdoso: React.FC<EnderecoIdosoProps> = ({ data, updateData, onNext,
     e.preventDefault();
     
     // Validar campos obrigatórios
-    if (!data.estado || !data.cidade || !data.endereco || !data.bairro || !data.numero || !data.complemento) {
+    if (!data.estado || !data.cidade || !data.endereco || !data.bairro || !data.cep || !data.numero) {
       toast.error("Por favor, preencha todos os campos obrigatórios!");
+      return;
+    }
+
+    // Validar formato do CEP
+    const cepRegex = /^\d{5}-\d{3}$/;
+    if (!cepRegex.test(data.cep)) {
+      toast.error("CEP inválido! Use o formato: 00000-000");
       return;
     }
 
     onNext();
   };
 
+  const estadosOptions = [
+    { value: 'AC', label: 'Acre' },
+    { value: 'AL', label: 'Alagoas' },
+    { value: 'AP', label: 'Amapá' },
+    { value: 'AM', label: 'Amazonas' },
+    { value: 'BA', label: 'Bahia' },
+    { value: 'CE', label: 'Ceará' },
+    { value: 'DF', label: 'Distrito Federal' },
+    { value: 'ES', label: 'Espírito Santo' },
+    { value: 'GO', label: 'Goiás' },
+    { value: 'MA', label: 'Maranhão' },
+    { value: 'MT', label: 'Mato Grosso' },
+    { value: 'MS', label: 'Mato Grosso do Sul' },
+    { value: 'MG', label: 'Minas Gerais' },
+    { value: 'PA', label: 'Pará' },
+    { value: 'PB', label: 'Paraíba' },
+    { value: 'PR', label: 'Paraná' },
+    { value: 'PE', label: 'Pernambuco' },
+    { value: 'PI', label: 'Piauí' },
+    { value: 'RJ', label: 'Rio de Janeiro' },
+    { value: 'RN', label: 'Rio Grande do Norte' },
+    { value: 'RS', label: 'Rio Grande do Sul' },
+    { value: 'RO', label: 'Rondônia' },
+    { value: 'RR', label: 'Roraima' },
+    { value: 'SC', label: 'Santa Catarina' },
+    { value: 'SP', label: 'São Paulo' },
+    { value: 'SE', label: 'Sergipe' },
+    { value: 'TO', label: 'Tocantins' }
+  ];
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormInput 
+        <SelectInput 
           label="Estado"
-          type="text"
           id="estado"
+          options={estadosOptions}
           required
           value={data.estado || ''}
           onChange={handleChange}
@@ -76,7 +113,7 @@ const EnderecoIdoso: React.FC<EnderecoIdosoProps> = ({ data, updateData, onNext,
           required
           value={data.cep || ''}
           onChange={handleChange}
-          mask="99999-999"
+          placeholder="00000-000"
         />
         
         <FormInput 
@@ -92,16 +129,7 @@ const EnderecoIdoso: React.FC<EnderecoIdosoProps> = ({ data, updateData, onNext,
           label="Complemento"
           type="text"
           id="complemento"
-          required
           value={data.complemento || ''}
-          onChange={handleChange}
-        />
-        
-        <FormInput 
-          label="Referência"
-          type="text"
-          id="referencia"
-          value={data.referencia || ''}
           onChange={handleChange}
         />
       </div>
