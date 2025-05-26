@@ -43,9 +43,9 @@ const IdosoForm: React.FC = () => {
           : undefined
       };
 
-      await contratanteService.cadastrar(dataToSend);
+      const response = await contratanteService.cadastrar(dataToSend);
       toast.success("Cadastro realizado com sucesso!");
-      navigate('/login'); // Redireciona para a página de login após o cadastro
+      navigate(`/address/${response.id_contratante}`); // Using id_contratante from the response
     } catch (error: any) {
       console.error('Erro durante o cadastro:', error);
       const errorMessage = error.response?.data?.detail || error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.";
