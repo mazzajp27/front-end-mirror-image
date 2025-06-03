@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import FormHeader from './FormHeader';
-import StepIndicator from './StepIndicator';
 import FormInput from './FormInput';
 import SelectInput from './SelectInput';
 import { cuidadorService } from '../services/api';
 
 const CuidadorForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nome: '',
     cpf: '',
@@ -30,17 +30,54 @@ const CuidadorForm = () => {
     });
   };
 
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  };
+
+  const validateCPF = (cpf: string) => {
+    const numbers = cpf.replace(/\D/g, '');
+    return numbers.length === 11;
+  };
+
+  const validatePhone = (phone: string) => {
+    const numbers = phone.replace(/\D/g, '');
+    return numbers.length === 11;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validar se as senhas coincidem
+    // Validações
+    if (!validateEmail(formData.email)) {
+      toast.error("Por favor, insira um e-mail válido!");
+      return;
+    }
+
+    if (!validatePassword(formData.senha)) {
+      toast.error("A senha deve ter no mínimo 8 caracteres e conter pelo menos um caractere especial!");
+      return;
+    }
+
     if (formData.senha !== formData.confirmarSenha) {
       toast.error("As senhas não coincidem!");
       return;
     }
+
+    if (!validateCPF(formData.cpf)) {
+      toast.error("Por favor, insira um CPF válido!");
+      return;
+    }
+
+    if (!validatePhone(formData.telefone)) {
+      toast.error("Por favor, insira um telefone válido!");
+      return;
+    }
     
-    // Validar outros campos, se necessário
-    if (!formData.nome || !formData.cpf || !formData.email || !formData.dataNascimento || !formData.telefone) {
+    if (!formData.nome || !formData.cpf || !formData.email || !formData.dataNascimento || !formData.telefone || !formData.genero) {
       toast.error("Por favor, preencha todos os campos obrigatórios!");
       return;
     }
@@ -48,15 +85,13 @@ const CuidadorForm = () => {
     try {
       setIsSubmitting(true);
       
-      // Enviar dados para API (excluindo confirmarSenha que é apenas para validação)
       const { confirmarSenha, ...cuidadorData } = formData;
       
       const response = await cuidadorService.cadastrar(cuidadorData);
       console.log('Resposta da API:', response);
       
       toast.success("Cadastro realizado com sucesso!");
-      // Aqui você pode implementar navegação para a próxima etapa
-      // ou qualquer outra ação após o cadastro bem-sucedido
+      navigate('/login'); // Redireciona para a página de login após o cadastro
     } catch (error: any) {
       console.error('Erro durante o cadastro:', error);
       toast.error(error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.");
@@ -72,19 +107,11 @@ const CuidadorForm = () => {
     { value: 'prefiro-nao-informar', label: 'Prefiro não informar' }
   ];
 
-  const steps = [
-    { name: "Dados Pessoais", number: 1 },
-    { name: "Endereço", number: 2 },
-    { name: "Questionário", number: 3 },
-    { name: "Hobbies", number: 4 }
-  ];
-
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
       <FormHeader />
-      <StepIndicator currentStep={1} steps={steps} />
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 md:p-10 mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormInput 
             label="Nome Completo"
@@ -102,6 +129,8 @@ const CuidadorForm = () => {
             required
             value={formData.cpf}
             onChange={handleChange}
+            mask="999.999.999-99"
+            placeholder="Digite os 11 números do CPF"
           />
           
           <FormInput 
@@ -130,6 +159,8 @@ const CuidadorForm = () => {
             required
             value={formData.telefone}
             onChange={handleChange}
+            mask="(99) 99999-9999"
+            placeholder="Digite os 11 números do telefone"
           />
           
           <SelectInput 
@@ -148,6 +179,7 @@ const CuidadorForm = () => {
             required
             value={formData.senha}
             onChange={handleChange}
+            placeholder="Mínimo 8 caracteres e 1 caractere especial"
           />
           
           <FormInput 
@@ -159,15 +191,23 @@ const CuidadorForm = () => {
             onChange={handleChange}
           />
         </div>
-        
-        <div className="flex justify-center mt-10">
+
+        <div className="flex justify-between mt-10">
           <button 
-            type="submit" 
-            className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            type="button"
+            onClick={() => navigate('/cadastro')}
+            className="bg-gray-300 text-gray-700 py-3 px-12 rounded-full hover:bg-gray-400 transition-colors"
+          >
+            Voltar
+          </button>
+
+          <button 
+            type="submit"
+            className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Enviando...' : 'Avançar'}
-            {!isSubmitting && <ArrowRight size={18} />}
+            {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
+            <ArrowRight size={18} />
           </button>
         </div>
       </form>

@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { CuidadorData } from '../../services/api';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
 
 interface QuestionarioCuidadorProps {
   data: CuidadorData;
@@ -75,14 +75,50 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Validar formação acadêmica
+    if (!formacaoAcademica.cursos || !formacaoAcademica.instituicao || !formacaoAcademica.area) {
+      toast.error("Por favor, preencha todos os campos da formação acadêmica!");
+      return;
+    }
+
+    // Validar experiência profissional
+    if (!experienciaProfissional.tempoExperiencia || !experienciaProfissional.responsabilidades) {
+      toast.error("Por favor, preencha todos os campos da experiência profissional!");
+      return;
+    }
+    if (experienciaProfissional.possuiCertificacao && !experienciaProfissional.certificacoes) {
+      toast.error("Por favor, especifique suas certificações!");
+      return;
+    }
+
+    // Validar qualidades
+    if (qualidades.habilidades.length === 0) {
+      toast.error("Por favor, selecione pelo menos uma habilidade!");
+      return;
+    }
+    if (!qualidades.horariosDisponiveis) {
+      toast.error("Por favor, informe seus horários disponíveis!");
+      return;
+    }
+    if (!qualidades.qualidadesImportantes) {
+      toast.error("Por favor, descreva suas qualidades importantes!");
+      return;
+    }
+
+    // Validar referências
+    if (!referencias.nomeContato) {
+      toast.error("Por favor, forneça pelo menos uma referência de contato!");
+      return;
+    }
+
+    // Se todas as validações passarem, atualiza os dados e avança
     updateData({
       formacaoAcademica,
       experienciaProfissional,
       qualidades,
       referencias
     });
-    
     onNext();
   };
 
@@ -92,7 +128,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
         <h3 className="text-lg font-bold">1. Formação Acadêmica</h3>
         <div className="space-y-4">
           <div>
-            <label htmlFor="formacao-cursos" className="block font-medium mb-1">
+            <label htmlFor="formacao-cursos" className="block font-medium mb-1 required-field">
               Cursos Realizados:
             </label>
             <Textarea
@@ -101,11 +137,12 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               onChange={handleFormacaoChange}
               placeholder="Liste seus cursos relevantes"
               className="bg-gray-100"
+              required
             />
           </div>
           
           <div>
-            <label htmlFor="formacao-instituicao" className="block font-medium mb-1">
+            <label htmlFor="formacao-instituicao" className="block font-medium mb-1 required-field">
               Instituição de Ensino:
             </label>
             <input
@@ -114,11 +151,12 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               value={formacaoAcademica.instituicao}
               onChange={handleFormacaoChange}
               className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+              required
             />
           </div>
           
           <div>
-            <label htmlFor="formacao-area" className="block font-medium mb-1">
+            <label htmlFor="formacao-area" className="block font-medium mb-1 required-field">
               Área de Formação:
             </label>
             <input
@@ -127,6 +165,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               value={formacaoAcademica.area}
               onChange={handleFormacaoChange}
               className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+              required
             />
           </div>
         </div>
@@ -134,30 +173,8 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
         <h3 className="text-lg font-bold mt-6">2. Experiência Profissional</h3>
         <div className="space-y-4">
           <div>
-            <p className="mb-2 font-medium">Você já trabalhou como cuidador(a) de idosos?</p>
-            <div>
-              <label className="flex items-center space-x-2">
-                <input 
-                  type="radio" 
-                  name="trabalhou-como-cuidador" 
-                  value="sim"
-                />
-                <span>Sim</span>
-              </label>
-              <label className="flex items-center space-x-2 mt-1">
-                <input 
-                  type="radio" 
-                  name="trabalhou-como-cuidador" 
-                  value="nao"
-                />
-                <span>Não</span>
-              </label>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="exp-tempoExperiencia" className="block font-medium mb-1">
-              Se sim, há quanto tempo você trabalha como cuidador(a) de idosos?
+            <label htmlFor="exp-tempoExperiencia" className="block font-medium mb-1 required-field">
+              Tempo de Experiência como Cuidador(a):
             </label>
             <input
               type="text"
@@ -165,37 +182,40 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               value={experienciaProfissional.tempoExperiencia}
               onChange={handleExperienciaChange}
               className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+              required
             />
           </div>
           
           <div>
-            <label htmlFor="exp-responsabilidades" className="block font-medium mb-1">
-              Quais suas principais responsabilidades?
+            <label htmlFor="exp-responsabilidades" className="block font-medium mb-1 required-field">
+              Principais Responsabilidades:
             </label>
             <Textarea
               id="exp-responsabilidades"
               value={experienciaProfissional.responsabilidades}
               onChange={handleExperienciaChange}
               className="bg-gray-100"
+              required
             />
           </div>
           
           <div>
-            <p className="mb-2 font-medium">Já possui certificação em cuidados com idosos?</p>
-            <div>
+            <p className="mb-2 font-medium required-field">Possui Certificações na Área?</p>
+            <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-certificacao" 
+                  name="possui-certificacao"
                   checked={experienciaProfissional.possuiCertificacao === true}
                   onChange={() => setExperienciaProfissional(prev => ({...prev, possuiCertificacao: true}))}
+                  required
                 />
                 <span>Sim</span>
               </label>
-              <label className="flex items-center space-x-2 mt-1">
+              <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-certificacao" 
+                  name="possui-certificacao"
                   checked={experienciaProfissional.possuiCertificacao === false}
                   onChange={() => setExperienciaProfissional(prev => ({...prev, possuiCertificacao: false}))}
                 />
@@ -221,7 +241,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
         <h3 className="text-lg font-bold mt-6">3. Qualidades e Preferências:</h3>
         <div className="space-y-4">
           <div>
-            <p className="mb-2 font-medium">Quais são suas principais habilidades como cuidador(a)? (Marque todas as que se aplicam)</p>
+            <p className="mb-2 font-medium required-field">Quais são suas principais habilidades como cuidador(a)? (Selecione pelo menos uma)</p>
             <div className="space-y-2">
               <div className="flex items-top space-x-2">
                 <Checkbox 
@@ -285,31 +305,32 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
           </div>
           
           <div>
-            <label htmlFor="qual-horariosDisponiveis" className="block font-medium mb-1">
-              Quais são seus horários disponíveis para o trabalho?
+            <label htmlFor="qual-horariosDisponiveis" className="block font-medium mb-1 required-field">
+              Quais são seus horários disponíveis para trabalho?
             </label>
-            <input
-              type="text"
+            <Textarea
               id="qual-horariosDisponiveis"
               value={qualidades.horariosDisponiveis}
               onChange={handleQualidadesChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+              className="bg-gray-100"
+              required
             />
           </div>
           
           <div>
-            <p className="mb-2 font-medium">Você possui disponibilidade para plantões noturnos ou finais de semana?</p>
-            <div>
+            <p className="mb-2 font-medium required-field">Disponibilidade para Plantões?</p>
+            <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
                   name="disponibilidade-plantoes"
                   checked={qualidades.disponibilidadePlantoes === true}
                   onChange={() => setQualidades(prev => ({...prev, disponibilidadePlantoes: true}))}
+                  required
                 />
                 <span>Sim</span>
               </label>
-              <label className="flex items-center space-x-2 mt-1">
+              <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
                   name="disponibilidade-plantoes"
@@ -322,21 +343,22 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
           </div>
           
           <div>
-            <label htmlFor="qual-qualidadesImportantes" className="block font-medium mb-1">
-              Quais qualidades você considera mais importantes para ser um bom cuidador(a)?
+            <label htmlFor="qual-qualidadesImportantes" className="block font-medium mb-1 required-field">
+              Descreva suas qualidades mais importantes como cuidador(a):
             </label>
             <Textarea
               id="qual-qualidadesImportantes"
               value={qualidades.qualidadesImportantes}
               onChange={handleQualidadesChange}
               className="bg-gray-100"
+              required
             />
           </div>
         </div>
 
         <h3 className="text-lg font-bold mt-6">4. Referências:</h3>
         <div>
-          <label htmlFor="referencia-nome" className="block font-medium mb-1">
+          <label htmlFor="referencia-nome" className="block font-medium mb-1 required-field">
             Nome e Contato de Referência Profissional:
           </label>
           <input
@@ -345,6 +367,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
             value={referencias.nomeContato}
             onChange={handleReferenciaChange}
             className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+            required
           />
         </div>
       </div>

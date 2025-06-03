@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -112,17 +111,20 @@ const LoginForm: React.FC = () => {
           </div>
         </form>
         
-        <div className="mt-6 text-center">
-          <p className="text-sm">
-            Não tem uma conta?{' '}
-            <a href="/tipo-cadastro" className="text-[#0056a4] font-bold hover:underline">
-              CADASTRAR-SE
-            </a>
-          </p>
+        <div className="mt-6 flex flex-col items-center justify-center space-y-4">
+          <p className="text-sm">Não tem uma conta?</p>
+          <button 
+            type="button"
+            onClick={() => navigate('/cadastro')} 
+            className="bg-white text-[#0056a4] font-bold hover:bg-[#0056a4] hover:text-white px-6 py-2 rounded-full border-2 border-[#0056a4] transition-colors duration-300"
+          >
+            CADASTRAR-SE
+          </button>
         </div>
         
         <div className="mt-8 text-center">
           <button
+            type="button"
             onClick={() => navigate('/')}
             className="text-[#0056a4] hover:underline text-sm"
           >

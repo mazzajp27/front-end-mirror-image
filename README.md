@@ -1,73 +1,69 @@
-# Welcome to your Lovable project
+# Amigo Cuidador - Plataforma de Saúde Acessível
 
-## Project info
+## Sobre o Projeto
 
-**URL**: https://lovable.dev/projects/fde9317c-0baa-43b6-b4ee-2bd53743e17f
+O Amigo Cuidador é uma plataforma de saúde que prioriza a acessibilidade e a inclusão. Nosso objetivo é tornar o acesso à informação e serviços de saúde mais fácil e acessível para todos.
 
-## How can I edit this code?
+## Recursos de Acessibilidade
 
-There are several ways of editing your application.
+Nossa plataforma inclui diversos recursos de acessibilidade:
 
-**Use Lovable**
+- Ajuste de tamanho de fonte (90% a 150%)
+- Modo de alto contraste
+- Modo dislexia com fonte OpenDyslexic
+- Modo daltonismo (Deuteranopia, Protanopia, Tritanopia)
+- Redução de movimento
+- Espaçamento de texto aumentado
+- Cursor grande
+- Modo de leitura
+- Modo de foco
+- Dicas de navegação
+- Atalhos de teclado
+- Navegação por teclado
+- Suporte a leitores de tela
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fde9317c-0baa-43b6-b4ee-2bd53743e17f) and start prompting.
+## Instalação
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/amigo-cuidador.git
+cd amigo-cuidador
+```
 
-**Use your preferred IDE**
+2. Instale as dependências:
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. Baixe as fontes OpenDyslexic:
+   - Acesse https://github.com/antijingoist/opendyslexic/releases
+   - Baixe a versão mais recente (atualmente v0.91.12)
+   - Extraia os arquivos .otf para a pasta `public/fonts/`
+   - Os arquivos necessários são:
+     - OpenDyslexic-Regular.otf
+     - OpenDyslexic-Bold.otf
+     - OpenDyslexic-Italic.otf
+     - OpenDyslexic-BoldItalic.otf
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Inicie o servidor de desenvolvimento:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Atalhos de Teclado
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `Tab`: Navegar entre elementos
+- `Enter/Space`: Selecionar/Ativar
+- `Esc`: Fechar menus
+- `Alt + 1`: Ir para o início
+- `Alt + 2`: Ir para serviços
+- `Alt + A`: Abrir menu de acessibilidade
+- `Alt + C`: Ir para contato
 
-**Use GitHub Codespaces**
+## Contribuindo
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Contribuições são bem-vindas! Por favor, leia nossas diretrizes de contribuição antes de enviar um pull request.
 
-## What technologies are used for this project?
+## Licença
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/fde9317c-0baa-43b6-b4ee-2bd53743e17f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.

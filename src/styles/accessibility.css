@@ -1,0 +1,206 @@
+/* Estilos para o modo de alto contraste */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+body.high-contrast * {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+body.high-contrast a,
+body.high-contrast button {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+
+body.high-contrast a:hover,
+body.high-contrast button:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+body.high-contrast img {
+  filter: grayscale(100%) contrast(120%);
+}
+
+/* Modo Dislexia */
+body.dyslexic-mode {
+  font-family: 'OpenDyslexic', Arial, sans-serif !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+}
+
+body.dyslexic-mode p {
+  max-width: 60ch !important;
+}
+
+/* Modo Daltonismo */
+body.deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+body.protanopia {
+  filter: url('#protanopia-filter');
+}
+
+body.tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* Redução de Movimento */
+body.reduced-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Espaçamento de Texto */
+body.increased-spacing {
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.2em !important;
+  line-height: 2 !important;
+}
+
+/* Cursor Aumentado */
+body.large-cursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23000000"><path d="M7 2l12 11.2-5.8.5 3.3 7.3-2.2 1-3.2-7-4.1 4z"/></svg>') 16 16, auto !important;
+}
+
+/* Estilos para dicas de navegação */
+body.show-tooltips [aria-label]:hover::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+/* Foco visível para navegação por teclado */
+*:focus {
+  outline: 3px solid #0056a4 !important;
+  outline-offset: 2px !important;
+}
+
+/* Pular para o conteúdo principal */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #0056a4;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Melhorias de legibilidade */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Espaçamento melhorado para leitores de tela */
+[role="button"],
+button,
+a {
+  padding: 0.5rem !important;
+  margin: 0.25rem !important;
+}
+
+/* Melhor visibilidade para links */
+a {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* Estados de foco e hover mais visíveis */
+a:hover,
+button:hover {
+  opacity: 0.8;
+}
+
+/* Melhor contraste para texto */
+.text-gray-600 {
+  color: #595959 !important;
+}
+
+.text-gray-700 {
+  color: #404040 !important;
+}
+
+/* Suporte para texto justificado */
+.text-justify {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Melhor espaçamento para leitura */
+p, li {
+  line-height: 1.6;
+  margin-bottom: 1em;
+}
+
+/* Suporte para modo escuro do sistema */
+@media (prefers-color-scheme: dark) {
+  body:not(.high-contrast) {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+}
+
+/* SVG Filters para Daltonismo */
+.color-filters {
+  position: absolute;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* Modo de Leitura */
+body.reading-mode {
+  background-color: #f5f5eb !important;
+  color: #333 !important;
+}
+
+body.reading-mode main {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 2rem !important;
+}
+
+body.reading-mode p {
+  font-size: 1.2em !important;
+  line-height: 1.8 !important;
+  margin-bottom: 1.5em !important;
+}
+
+/* Modo de Foco */
+body.focus-mode * {
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+body.focus-mode *:hover,
+body.focus-mode *:focus {
+  opacity: 1;
+} 

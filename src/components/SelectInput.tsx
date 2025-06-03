@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Eye } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface Option {
   value: string;
@@ -35,7 +34,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
       <div className="relative">
         <select
           id={id}
-          className="form-input"
+          className="form-input appearance-none"
           required={required}
           value={value}
           onChange={onChange}
@@ -48,7 +47,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
           ))}
         </select>
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
-          <Eye size={18} />
+          <ChevronDown size={18} />
         </div>
       </div>
     </div>

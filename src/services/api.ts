@@ -97,13 +97,52 @@ export interface ContratanteData {
   cep: string;
   numero: string;
   complemento: string;
+  referencia?: string;
   // Questionário
-  estado_civil?: string;
-  profissao?: string;
-  renda_mensal?: string;
-  observacoes?: string;
-  // Hobbies
+  questionario?: {
+    saudeGeral: {
+      condicoesMedicas: string;
+      medicamentosUso: string;
+      alergias: string;
+      restricoesAlimentares: string;
+      mobilidadeRestricoes: string;
+    };
+    necessidadesCuidado: {
+      auxilioAtividadesDiarias: {
+        precisa: boolean;
+        quais: string;
+      };
+      auxilioMedicacao: {
+        precisa: boolean;
+        frequencia: string;
+      };
+      monitoramentoSinais: {
+        necessario: boolean;
+        quais: string;
+      };
+    };
+    preferenciasCuidado: {
+      horarioPreferencial: string;
+      frequenciaCuidado: string;
+      caracteristicasCuidador: string;
+      observacoesAdicionais: string;
+    };
+  };
+  // Hobbies e Atividades
   hobbies?: string[];
+  atividadesFisicas?: {
+    pratica: boolean;
+    quais: string;
+  };
+  atividadesSociais?: {
+    participa: boolean;
+    quais: string;
+  };
+  preferencias?: {
+    alimentacao: string;
+    rotinaDiaria: string;
+    observacoesAdicionais: string;
+  };
 }
 
 // Interface para tipagem dos dados de login

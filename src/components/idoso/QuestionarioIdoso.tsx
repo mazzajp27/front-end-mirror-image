@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { IdosoData } from '../../services/api';
+import { ContratanteData } from '../../services/api';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 interface QuestionarioIdosoProps {
-  data: IdosoData;
-  updateData: (data: Partial<IdosoData>) => void;
+  data: ContratanteData;
+  updateData: (data: Partial<ContratanteData>) => void;
   onNext: () => void;
   onPrevious: () => void;
 }
@@ -16,323 +17,456 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
   onNext, 
   onPrevious 
 }) => {
-  const [historicoMedico, setHistoricoMedico] = useState({
-    condicaoMedica: data.historicoMedico?.condicaoMedica || '',
-    qualCondicao: data.historicoMedico?.qualCondicao || '',
-    tomaMedicamento: data.historicoMedico?.tomaMedicamento || false,
-    quaisMedicamentos: data.historicoMedico?.quaisMedicamentos || '',
+  const [questionario, setQuestionario] = useState({
+    saudeGeral: {
+      condicoesMedicas: data.questionario?.saudeGeral?.condicoesMedicas || '',
+      medicamentosUso: data.questionario?.saudeGeral?.medicamentosUso || '',
+      alergias: data.questionario?.saudeGeral?.alergias || '',
+      restricoesAlimentares: data.questionario?.saudeGeral?.restricoesAlimentares || '',
+      mobilidadeRestricoes: data.questionario?.saudeGeral?.mobilidadeRestricoes || ''
+    },
+    necessidadesCuidado: {
+      auxilioAtividadesDiarias: {
+        precisa: data.questionario?.necessidadesCuidado?.auxilioAtividadesDiarias?.precisa || false,
+        quais: data.questionario?.necessidadesCuidado?.auxilioAtividadesDiarias?.quais || ''
+      },
+      auxilioMedicacao: {
+        precisa: data.questionario?.necessidadesCuidado?.auxilioMedicacao?.precisa || false,
+        frequencia: data.questionario?.necessidadesCuidado?.auxilioMedicacao?.frequencia || ''
+      },
+      monitoramentoSinais: {
+        necessario: data.questionario?.necessidadesCuidado?.monitoramentoSinais?.necessario || false,
+        quais: data.questionario?.necessidadesCuidado?.monitoramentoSinais?.quais || ''
+      }
+    },
+    preferenciasCuidado: {
+      horarioPreferencial: data.questionario?.preferenciasCuidado?.horarioPreferencial || '',
+      frequenciaCuidado: data.questionario?.preferenciasCuidado?.frequenciaCuidado || '',
+      caracteristicasCuidador: data.questionario?.preferenciasCuidado?.caracteristicasCuidador || '',
+      observacoesAdicionais: data.questionario?.preferenciasCuidado?.observacoesAdicionais || ''
+    }
   });
 
-  // Change from true to boolean to fix the type error
-  const [atividadesDiarias, setAtividadesDiarias] = useState({
-    realizaSozinho: data.atividadesDiarias?.realizaSozinho || false,
-    quaisAtividadesPrecisaAjuda: data.atividadesDiarias?.quaisAtividadesPrecisaAjuda || '',
-  });
-
-  const [familiaApoio, setFamiliaApoio] = useState({
-    visitasFrequentes: data.familiaApoio?.visitasFrequentes || false,
-    frequenciaVisitas: data.familiaApoio?.frequenciaVisitas || '',
-  });
-
-  const [qualidadesPreferencias, setQualidadesPreferencias] = useState({
-    principaisQualidades: data.qualidadesPreferencias?.principaisQualidades || '',
-    expectativasCuidador: data.qualidadesPreferencias?.expectativasCuidador || '',
-  });
-
-  const [deficienciasNecessidades, setDeficienciasNecessidades] = useState({
-    possuiDeficiencia: data.deficienciasNecessidades?.possuiDeficiencia || false,
-    qualDeficiencia: data.deficienciasNecessidades?.qualDeficiencia || '',
-    informacoesAdicionais: data.deficienciasNecessidades?.informacoesAdicionais || '',
-  });
-
-  const handleHistoricoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleSaudeGeralChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setHistoricoMedico(prev => ({ ...prev, [id.replace('historico-', '')]: value }));
+    setQuestionario(prev => ({
+      ...prev,
+      saudeGeral: {
+        ...prev.saudeGeral,
+        [id.replace('saude-', '')]: value
+      }
+    }));
   };
 
-  const handleAtividadesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleAuxilioAtividadesChange = (value: boolean) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        auxilioAtividadesDiarias: {
+          ...prev.necessidadesCuidado.auxilioAtividadesDiarias,
+          precisa: value
+        }
+      }
+    }));
+  };
+
+  const handleQuaisAtividadesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        auxilioAtividadesDiarias: {
+          ...prev.necessidadesCuidado.auxilioAtividadesDiarias,
+          quais: e.target.value
+        }
+      }
+    }));
+  };
+
+  const handleAuxilioMedicacaoChange = (value: boolean) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        auxilioMedicacao: {
+          ...prev.necessidadesCuidado.auxilioMedicacao,
+          precisa: value
+        }
+      }
+    }));
+  };
+
+  const handleFrequenciaMedicacaoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        auxilioMedicacao: {
+          ...prev.necessidadesCuidado.auxilioMedicacao,
+          frequencia: e.target.value
+        }
+      }
+    }));
+  };
+
+  const handleMonitoramentoSinaisChange = (value: boolean) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        monitoramentoSinais: {
+          ...prev.necessidadesCuidado.monitoramentoSinais,
+          necessario: value
+        }
+      }
+    }));
+  };
+
+  const handleQuaisSinaisChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuestionario(prev => ({
+      ...prev,
+      necessidadesCuidado: {
+        ...prev.necessidadesCuidado,
+        monitoramentoSinais: {
+          ...prev.necessidadesCuidado.monitoramentoSinais,
+          quais: e.target.value
+        }
+      }
+    }));
+  };
+
+  const handlePreferenciasChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setAtividadesDiarias(prev => ({ ...prev, [id.replace('atividades-', '')]: value }));
+    setQuestionario(prev => ({
+      ...prev,
+      preferenciasCuidado: {
+        ...prev.preferenciasCuidado,
+        [id.replace('pref-', '')]: value
+      }
+    }));
   };
 
-  const handleFamiliaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFamiliaApoio(prev => ({ ...prev, [id.replace('familia-', '')]: value }));
-  };
+  const validateForm = () => {
+    // Validar saúde geral
+    if (!questionario.saudeGeral.condicoesMedicas) {
+      toast.error('Por favor, informe as condições médicas (ou "Nenhuma" se não houver)');
+      return false;
+    }
+    if (!questionario.saudeGeral.medicamentosUso) {
+      toast.error('Por favor, informe os medicamentos em uso (ou "Nenhum" se não houver)');
+      return false;
+    }
+    if (!questionario.saudeGeral.alergias) {
+      toast.error('Por favor, informe as alergias (ou "Nenhuma" se não houver)');
+      return false;
+    }
+    if (!questionario.saudeGeral.restricoesAlimentares) {
+      toast.error('Por favor, informe as restrições alimentares (ou "Nenhuma" se não houver)');
+      return false;
+    }
+    if (!questionario.saudeGeral.mobilidadeRestricoes) {
+      toast.error('Por favor, informe as restrições de mobilidade (ou "Nenhuma" se não houver)');
+      return false;
+    }
 
-  const handleQualidadesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setQualidadesPreferencias(prev => ({ ...prev, [id.replace('qualidades-', '')]: value }));
-  };
+    // Validar necessidades de cuidado
+    if (questionario.necessidadesCuidado.auxilioAtividadesDiarias.precisa && 
+        !questionario.necessidadesCuidado.auxilioAtividadesDiarias.quais) {
+      toast.error('Por favor, especifique quais atividades diárias precisam de auxílio');
+      return false;
+    }
+    if (questionario.necessidadesCuidado.auxilioMedicacao.precisa && 
+        !questionario.necessidadesCuidado.auxilioMedicacao.frequencia) {
+      toast.error('Por favor, especifique a frequência do auxílio com medicação');
+      return false;
+    }
+    if (questionario.necessidadesCuidado.monitoramentoSinais.necessario && 
+        !questionario.necessidadesCuidado.monitoramentoSinais.quais) {
+      toast.error('Por favor, especifique quais sinais vitais precisam ser monitorados');
+      return false;
+    }
 
-  const handleDeficienciasChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setDeficienciasNecessidades(prev => ({ ...prev, [id.replace('deficiencias-', '')]: value }));
-  };
+    // Validar preferências de cuidado
+    if (!questionario.preferenciasCuidado.horarioPreferencial) {
+      toast.error('Por favor, informe o horário preferencial para o cuidado');
+      return false;
+    }
+    if (!questionario.preferenciasCuidado.frequenciaCuidado) {
+      toast.error('Por favor, informe a frequência desejada para o cuidado');
+      return false;
+    }
+    if (!questionario.preferenciasCuidado.caracteristicasCuidador) {
+      toast.error('Por favor, informe as características desejadas do cuidador');
+      return false;
+    }
 
-  const handleCondicaoMedicaChange = (value: boolean) => {
-    setHistoricoMedico(prev => ({...prev, condicaoMedica: value ? "sim" : "não"}));
-  };
-
-  const handleTomaMedicamentoChange = (value: boolean) => {
-    setHistoricoMedico(prev => ({...prev, tomaMedicamento: value}));
-  };
-
-  const handleRealizaSozinhoChange = (value: boolean) => {
-    setAtividadesDiarias(prev => ({...prev, realizaSozinho: value}));
-  };
-
-  const handleVisitasFrequentesChange = (value: boolean) => {
-    setFamiliaApoio(prev => ({...prev, visitasFrequentes: value}));
-  };
-
-  const handlePossuiDeficienciaChange = (value: boolean) => {
-    setDeficienciasNecessidades(prev => ({...prev, possuiDeficiencia: value}));
+    return true;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    updateData({
-      historicoMedico,
-      atividadesDiarias,
-      familiaApoio,
-      qualidadesPreferencias,
-      deficienciasNecessidades
-    });
-    
+
+    if (!validateForm()) {
+      return;
+    }
+
+    updateData({ questionario });
     onNext();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div className="space-y-6">
-        <h3 className="text-lg font-bold">1. Histórico Médico:</h3>
+        <h3 className="text-lg font-bold">1. Saúde Geral</h3>
         <div className="space-y-4">
           <div>
-            <label htmlFor="historico-condicaoMedica" className="block font-medium mb-1">
-              Você possui alguma condição médica que exija cuidados especiais?
-            </label>
-            <input
-              type="text"
-              id="historico-condicaoMedica"
-              value={historicoMedico.condicaoMedica}
-              onChange={handleHistoricoChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="historico-qualCondicao" className="block font-medium mb-1">
-              Se sim, qual(is)?
-            </label>
-            <input
-              type="text"
-              id="historico-qualCondicao"
-              value={historicoMedico.qualCondicao}
-              onChange={handleHistoricoChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          
-          <div>
-            <p className="mb-2 font-medium">Está tomando algum medicamento regularmente?</p>
-            <div>
-              <label className="flex items-center space-x-2">
-                <input 
-                  type="radio" 
-                  name="toma-medicamento"
-                  checked={historicoMedico.tomaMedicamento === true}
-                  onChange={() => handleTomaMedicamentoChange(true)}
-                />
-                <span>Sim</span>
-              </label>
-              <label className="flex items-center space-x-2 mt-1">
-                <input 
-                  type="radio" 
-                  name="toma-medicamento"
-                  checked={historicoMedico.tomaMedicamento === false}
-                  onChange={() => handleTomaMedicamentoChange(false)}
-                />
-                <span>Não</span>
-              </label>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="historico-quaisMedicamentos" className="block font-medium mb-1">
-              Se sim, quais medicamentos e horários?
-            </label>
-            <input
-              type="text"
-              id="historico-quaisMedicamentos"
-              value={historicoMedico.quaisMedicamentos}
-              onChange={handleHistoricoChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-        </div>
-
-        <h3 className="text-lg font-bold mt-6">2. Atividades Diárias:</h3>
-        <div className="space-y-4">
-          <div>
-            <p className="mb-2 font-medium">Você consegue realizar as atividades diárias sozinho(a)?</p>
-            <div>
-              <label className="flex items-center space-x-2">
-                <input 
-                  type="radio" 
-                  name="realiza-sozinho"
-                  checked={atividadesDiarias.realizaSozinho === true}
-                  onChange={() => handleRealizaSozinhoChange(true)}
-                />
-                <span>Sim</span>
-              </label>
-              <label className="flex items-center space-x-2 mt-1">
-                <input 
-                  type="radio" 
-                  name="realiza-sozinho"
-                  checked={atividadesDiarias.realizaSozinho === false}
-                  onChange={() => handleRealizaSozinhoChange(false)}
-                />
-                <span>Não</span>
-              </label>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="atividades-quaisAtividadesPrecisaAjuda" className="block font-medium mb-1">
-              Se não, em quais atividades você precisa de ajuda?
-            </label>
-            <input
-              type="text"
-              id="atividades-quaisAtividadesPrecisaAjuda"
-              value={atividadesDiarias.quaisAtividadesPrecisaAjuda}
-              onChange={handleAtividadesChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-        </div>
-
-        <h3 className="text-lg font-bold mt-6">3. Família e Apoio Social:</h3>
-        <div className="space-y-4">
-          <div>
-            <p className="mb-2 font-medium">Você tem familiares ou amigos que costumam visitar com frequência?</p>
-            <div>
-              <label className="flex items-center space-x-2">
-                <input 
-                  type="radio" 
-                  name="visitas-frequentes"
-                  checked={familiaApoio.visitasFrequentes === true}
-                  onChange={() => handleVisitasFrequentesChange(true)}
-                />
-                <span>Sim</span>
-              </label>
-              <label className="flex items-center space-x-2 mt-1">
-                <input 
-                  type="radio" 
-                  name="visitas-frequentes"
-                  checked={familiaApoio.visitasFrequentes === false}
-                  onChange={() => handleVisitasFrequentesChange(false)}
-                />
-                <span>Não</span>
-              </label>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="familia-frequenciaVisitas" className="block font-medium mb-1">
-              Quantas vezes por semana você costuma receber visitas?
-            </label>
-            <input
-              type="text"
-              id="familia-frequenciaVisitas"
-              value={familiaApoio.frequenciaVisitas}
-              onChange={handleFamiliaChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-        </div>
-
-        <h3 className="text-lg font-bold mt-6">4. Qualidades e Preferências:</h3>
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="qualidades-principaisQualidades" className="block font-medium mb-1">
-              Como você descreveria suas principais qualidades?
+            <label htmlFor="saude-condicoesMedicas" className="block font-medium mb-1 required-field">
+              Condições médicas ou diagnósticos:
             </label>
             <Textarea
-              id="qualidades-principaisQualidades"
-              value={qualidadesPreferencias.principaisQualidades}
-              onChange={handleQualidadesChange}
+              id="saude-condicoesMedicas"
+              value={questionario.saudeGeral.condicoesMedicas}
+              onChange={handleSaudeGeralChange}
+              placeholder="Liste todas as condições médicas relevantes"
               className="bg-gray-100"
+              required
             />
           </div>
-          
+
           <div>
-            <label htmlFor="qualidades-expectativasCuidador" className="block font-medium mb-1">
-              O que você espera de um cuidador(a)?
+            <label htmlFor="saude-medicamentosUso" className="block font-medium mb-1 required-field">
+              Medicamentos em uso:
             </label>
             <Textarea
-              id="qualidades-expectativasCuidador"
-              value={qualidadesPreferencias.expectativasCuidador}
-              onChange={handleQualidadesChange}
+              id="saude-medicamentosUso"
+              value={questionario.saudeGeral.medicamentosUso}
+              onChange={handleSaudeGeralChange}
+              placeholder="Liste todos os medicamentos e suas dosagens"
               className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="saude-alergias" className="block font-medium mb-1 required-field">
+              Alergias:
+            </label>
+            <Textarea
+              id="saude-alergias"
+              value={questionario.saudeGeral.alergias}
+              onChange={handleSaudeGeralChange}
+              placeholder="Liste todas as alergias conhecidas"
+              className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="saude-restricoesAlimentares" className="block font-medium mb-1 required-field">
+              Restrições alimentares:
+            </label>
+            <Textarea
+              id="saude-restricoesAlimentares"
+              value={questionario.saudeGeral.restricoesAlimentares}
+              onChange={handleSaudeGeralChange}
+              placeholder="Liste todas as restrições alimentares"
+              className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="saude-mobilidadeRestricoes" className="block font-medium mb-1 required-field">
+              Restrições de mobilidade:
+            </label>
+            <Textarea
+              id="saude-mobilidadeRestricoes"
+              value={questionario.saudeGeral.mobilidadeRestricoes}
+              onChange={handleSaudeGeralChange}
+              placeholder="Descreva quaisquer limitações de mobilidade"
+              className="bg-gray-100"
+              required
             />
           </div>
         </div>
 
-        <h3 className="text-lg font-bold mt-6">5. Deficiências ou Necessidades Especiais:</h3>
+        <h3 className="text-lg font-bold">2. Necessidades de Cuidado</h3>
         <div className="space-y-4">
           <div>
-            <p className="mb-2 font-medium">Você possui alguma deficiência física ou intelectual?</p>
-            <div>
+            <p className="mb-2 font-medium required-field">Precisa de auxílio com atividades diárias?</p>
+            <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-deficiencia"
-                  checked={deficienciasNecessidades.possuiDeficiencia === true}
-                  onChange={() => handlePossuiDeficienciaChange(true)}
+                  name="auxilio-atividades"
+                  checked={questionario.necessidadesCuidado.auxilioAtividadesDiarias.precisa === true}
+                  onChange={() => handleAuxilioAtividadesChange(true)}
+                  required
                 />
                 <span>Sim</span>
               </label>
-              <label className="flex items-center space-x-2 mt-1">
+              <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-deficiencia"
-                  checked={deficienciasNecessidades.possuiDeficiencia === false}
-                  onChange={() => handlePossuiDeficienciaChange(false)}
+                  name="auxilio-atividades"
+                  checked={questionario.necessidadesCuidado.auxilioAtividadesDiarias.precisa === false}
+                  onChange={() => handleAuxilioAtividadesChange(false)}
                 />
                 <span>Não</span>
               </label>
+              {questionario.necessidadesCuidado.auxilioAtividadesDiarias.precisa && (
+                <div className="mt-2">
+                  <label htmlFor="quais-atividades" className="block required-field">Quais atividades?</label>
+                  <Textarea
+                    id="quais-atividades"
+                    value={questionario.necessidadesCuidado.auxilioAtividadesDiarias.quais}
+                    onChange={handleQuaisAtividadesChange}
+                    placeholder="Descreva as atividades que necessitam de auxílio"
+                    className="bg-gray-100"
+                    required
+                  />
+                </div>
+              )}
             </div>
           </div>
-          
+
           <div>
-            <label htmlFor="deficiencias-qualDeficiencia" className="block font-medium mb-1">
-              Se sim, qual?
-            </label>
-            <input
-              type="text"
-              id="deficiencias-qualDeficiencia"
-              value={deficienciasNecessidades.qualDeficiencia}
-              onChange={handleDeficienciasChange}
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
+            <p className="mb-2 font-medium required-field">Precisa de auxílio com medicação?</p>
+            <div className="space-y-1">
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
+                  name="auxilio-medicacao"
+                  checked={questionario.necessidadesCuidado.auxilioMedicacao.precisa === true}
+                  onChange={() => handleAuxilioMedicacaoChange(true)}
+                  required
+                />
+                <span>Sim</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
+                  name="auxilio-medicacao"
+                  checked={questionario.necessidadesCuidado.auxilioMedicacao.precisa === false}
+                  onChange={() => handleAuxilioMedicacaoChange(false)}
+                />
+                <span>Não</span>
+              </label>
+              {questionario.necessidadesCuidado.auxilioMedicacao.precisa && (
+                <div className="mt-2">
+                  <label htmlFor="frequencia-medicacao" className="block required-field">Qual a frequência?</label>
+                  <Textarea
+                    id="frequencia-medicacao"
+                    value={questionario.necessidadesCuidado.auxilioMedicacao.frequencia}
+                    onChange={handleFrequenciaMedicacaoChange}
+                    placeholder="Descreva a frequência e horários da medicação"
+                    className="bg-gray-100"
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          
+
           <div>
-            <label htmlFor="deficiencias-informacoesAdicionais" className="block font-medium mb-1">
-              Há algo que o(a) cuidador(a) precisa saber para cuidar melhor de você?
+            <p className="mb-2 font-medium required-field">Necessita de monitoramento de sinais vitais?</p>
+            <div className="space-y-1">
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
+                  name="monitoramento-sinais"
+                  checked={questionario.necessidadesCuidado.monitoramentoSinais.necessario === true}
+                  onChange={() => handleMonitoramentoSinaisChange(true)}
+                  required
+                />
+                <span>Sim</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
+                  name="monitoramento-sinais"
+                  checked={questionario.necessidadesCuidado.monitoramentoSinais.necessario === false}
+                  onChange={() => handleMonitoramentoSinaisChange(false)}
+                />
+                <span>Não</span>
+              </label>
+              {questionario.necessidadesCuidado.monitoramentoSinais.necessario && (
+                <div className="mt-2">
+                  <label htmlFor="quais-sinais" className="block required-field">Quais sinais vitais?</label>
+                  <Textarea
+                    id="quais-sinais"
+                    value={questionario.necessidadesCuidado.monitoramentoSinais.quais}
+                    onChange={handleQuaisSinaisChange}
+                    placeholder="Descreva quais sinais vitais precisam ser monitorados"
+                    className="bg-gray-100"
+                    required
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-lg font-bold">3. Preferências de Cuidado</h3>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="pref-horarioPreferencial" className="block font-medium mb-1 required-field">
+              Horário preferencial para o cuidado:
             </label>
             <Textarea
-              id="deficiencias-informacoesAdicionais"
-              value={deficienciasNecessidades.informacoesAdicionais}
-              onChange={handleDeficienciasChange}
+              id="pref-horarioPreferencial"
+              value={questionario.preferenciasCuidado.horarioPreferencial}
+              onChange={handlePreferenciasChange}
+              placeholder="Informe os horários preferenciais para receber o cuidado"
+              className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pref-frequenciaCuidado" className="block font-medium mb-1 required-field">
+              Frequência do cuidado:
+            </label>
+            <Textarea
+              id="pref-frequenciaCuidado"
+              value={questionario.preferenciasCuidado.frequenciaCuidado}
+              onChange={handlePreferenciasChange}
+              placeholder="Informe quantas vezes por semana/mês necessita do cuidado"
+              className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pref-caracteristicasCuidador" className="block font-medium mb-1 required-field">
+              Características desejadas do cuidador:
+            </label>
+            <Textarea
+              id="pref-caracteristicasCuidador"
+              value={questionario.preferenciasCuidado.caracteristicasCuidador}
+              onChange={handlePreferenciasChange}
+              placeholder="Descreva as características que você procura em um cuidador"
+              className="bg-gray-100"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pref-observacoesAdicionais" className="block font-medium mb-1">
+              Observações adicionais:
+            </label>
+            <Textarea
+              id="pref-observacoesAdicionais"
+              value={questionario.preferenciasCuidado.observacoesAdicionais}
+              onChange={handlePreferenciasChange}
+              placeholder="Outras informações relevantes que deseja compartilhar"
               className="bg-gray-100"
             />
           </div>
         </div>
       </div>
-      
+
       <div className="flex justify-between mt-10">
         <button 
           type="button"
@@ -344,10 +478,10 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
         </button>
 
         <button 
-          type="submit" 
+          type="submit"
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
         >
-          Avançar
+          Próximo
           <ArrowRight size={18} />
         </button>
       </div>

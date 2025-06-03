@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -16,8 +15,9 @@ const TipoCadastro: React.FC = () => {
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-5xl">
         <div className="flex-1 flex justify-center">
           <button 
+            type="button"
             onClick={() => navigate('/cadastro/cuidador')} 
-            className="bg-[#0056a4] text-white px-6 py-3 rounded-full font-medium hover:bg-[#004483] transition-colors"
+            className="bg-[#0056a4] text-white px-6 py-3 rounded-full font-medium hover:bg-[#004483] transition-colors text-xl w-64"
           >
             Cadastro Cuidador
           </button>
@@ -25,8 +25,9 @@ const TipoCadastro: React.FC = () => {
         
         <div className="flex-1 flex justify-center">
           <button 
+            type="button"
             onClick={() => navigate('/cadastro/idoso')} 
-            className="bg-[#0056a4] text-white px-6 py-3 rounded-full font-medium hover:bg-[#004483] transition-colors"
+            className="bg-[#0056a4] text-white px-6 py-3 rounded-full font-medium hover:bg-[#004483] transition-colors text-xl w-64"
           >
             Cadastro Contratante
           </button>
@@ -50,8 +51,9 @@ const TipoCadastro: React.FC = () => {
         </div>
       </div>
       
-      <div className="mt-16">
+      <div className="mt-8">
         <button 
+          type="button"
           onClick={() => navigate('/')} 
           className="flex items-center justify-center bg-[#0056a4] text-white px-6 py-2 rounded-full gap-2 hover:bg-[#004483] transition-colors"
         >
