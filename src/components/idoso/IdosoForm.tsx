@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import FormHeader from '../FormHeader';
 import StepIndicator from '../StepIndicator';
+import { ContratanteData, contratanteService } from '../../services/api';
 import DadosIdoso from './DadosIdoso';
 import EnderecoIdoso from './EnderecoIdoso';
 import QuestionarioIdoso from './QuestionarioIdoso';
 import HobbiesIdoso from './HobbiesIdoso';
-import { ContratanteData, contratanteService } from '../../services/api';
 
 const IdosoForm: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContratanteData>({
     nome: '',
     cpf: '',
@@ -31,8 +32,6 @@ const IdosoForm: React.FC = () => {
     complemento: '',
     // Outros campos serão preenchidos conforme o usuário avança no formulário
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const updateFormData = (data: Partial<ContratanteData>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -55,12 +54,21 @@ const IdosoForm: React.FC = () => {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      await contratanteService.cadastrar(formData);
+      
+      // Formatar a data antes de enviar (se existir)
+      const dataToSend = {
+        ...formData,
+        data_nascimento: formData.data_nascimento 
+          ? new Date(formData.data_nascimento).toISOString().split('T')[0]
+          : undefined
+      };
+
+      await contratanteService.cadastrar(dataToSend);
       toast.success("Cadastro realizado com sucesso!");
       navigate('/');
     } catch (error: any) {
       console.error('Erro durante o cadastro:', error);
-      const errorMessage = error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.";
+      const errorMessage = error.response?.data?.detail || error.response?.data?.message || "Erro ao processar o cadastro. Tente novamente.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -70,12 +78,12 @@ const IdosoForm: React.FC = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <DadosIdoso
-            data={formData}
-            updateData={updateFormData}
-            onNext={handleNext}
-          />
+  return (
+      <DadosIdoso 
+        data={formData} 
+        updateData={updateFormData} 
+        onNext={handleNext}
+      />
         );
       case 2:
         return (
@@ -111,20 +119,25 @@ const IdosoForm: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8">
-      <FormHeader title="Cadastro do Idoso" />
-      <StepIndicator 
-        currentStep={currentStep} 
-        steps={[
-          { name: 'Dados Pessoais', number: 1 },
-          { name: 'Endereço', number: 2 },
-          { name: 'Questionário', number: 3 },
-          { name: 'Hobbies', number: 4 }
-        ]} 
-      />
-      
-      <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 mt-6">
-        {renderStep()}
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="container max-w-3xl mx-auto px-4">
+        <FormHeader title="Cadastro do Idoso" />
+        
+        <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 mt-6">
+          <StepIndicator
+            steps={[
+              { name: 'Dados Pessoais', number: 1 },
+              { name: 'Endereço', number: 2 },
+              { name: 'Questionário', number: 3 },
+              { name: 'Hobbies', number: 4 }
+            ]}
+            currentStep={currentStep}
+          />
+
+          <div className="mt-8">
+            {renderStep()}
+          </div>
+        </div>
       </div>
     </div>
   );

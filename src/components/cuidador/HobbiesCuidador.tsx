@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { CuidadorData } from '../../services/api';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
 
 interface HobbiesCuidadorProps {
   data: CuidadorData;
@@ -179,49 +179,6 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validar atividades de tempo livre
-    if (interesses.atividadesTempo.length === 0) {
-      toast.error("Por favor, selecione pelo menos uma atividade de tempo livre!");
-      return;
-    }
-
-    // Validar atividades manuais
-    if (interesses.atividadesManuais.gosta && !interesses.atividadesManuais.quais) {
-      toast.error("Por favor, especifique quais atividades manuais você gosta!");
-      return;
-    }
-
-    // Validar preferências culturais
-    if (!interesses.prefCulturais.generosMusicais) {
-      toast.error("Por favor, informe seus gêneros musicais favoritos!");
-      return;
-    }
-    if (!interesses.prefCulturais.filmesTV) {
-      toast.error("Por favor, informe seus tipos de filmes e programas de TV favoritos!");
-      return;
-    }
-    if (interesses.prefCulturais.atividadesSociais.participa && !interesses.prefCulturais.atividadesSociais.quais) {
-      toast.error("Por favor, especifique quais atividades sociais você participa!");
-      return;
-    }
-
-    // Validar habilidades e preferências
-    if (interesses.habilidadesPreferencias.gostaEnsinar.gosta && !interesses.habilidadesPreferencias.gostaEnsinar.oquePoderia) {
-      toast.error("Por favor, especifique o que você gostaria de ensinar!");
-      return;
-    }
-    if (interesses.habilidadesPreferencias.interesseTecnologia.interessado && !interesses.habilidadesPreferencias.interesseTecnologia.quais) {
-      toast.error("Por favor, especifique quais tecnologias você tem interesse!");
-      return;
-    }
-
-    // Validar comentários
-    if (!interesses.comentarios) {
-      toast.error("Por favor, adicione algum comentário ou observação final!");
-      return;
-    }
-
     updateData({ interesses });
     onSubmit();
   };
@@ -231,7 +188,7 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
       <div className="space-y-6">
         <h3 className="text-lg font-bold">Seção 1: Interesses Gerais</h3>
         <div>
-          <p className="mb-2 font-medium required-field">1. Quais atividades você gosta de fazer no seu tempo livre? (Selecione pelo menos uma)</p>
+          <p className="mb-2 font-medium">1. Quais atividades você gosta de fazer no seu tempo livre? (Marque todas as opções que se aplicam)</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="flex items-top space-x-2">
               <Checkbox 
@@ -341,7 +298,7 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
         <h3 className="text-lg font-bold">Seção 2: Hobbies Específicos</h3>
         <div className="space-y-4">
           <div>
-            <p className="mb-2 font-medium required-field">2. Você gosta de atividades manuais, como tricô, crochê ou trabalhos com madeira?</p>
+            <p className="mb-2 font-medium">2. Você gosta de atividades manuais, como tricô, crochê ou trabalhos com madeira?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -349,7 +306,6 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
                   name="atividades-manuais"
                   checked={interesses.atividadesManuais.gosta === true}
                   onChange={() => handleAtividadesManuais(true)}
-                  required
                 />
                 <span>Sim</span>
               </label>
@@ -364,14 +320,13 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               </label>
               {interesses.atividadesManuais.gosta && (
                 <div className="mt-2">
-                  <label htmlFor="quais-atividades-manuais" className="block required-field">Se sim, qual(is)?</label>
+                  <label htmlFor="quais-atividades-manuais" className="block">Se sim, qual(is)?</label>
                   <input
                     type="text"
                     id="quais-atividades-manuais"
                     value={interesses.atividadesManuais.quais}
                     onChange={handleQuaisAtividadesManuais}
                     className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md mt-1"
-                    required
                   />
                 </div>
               )}
@@ -382,7 +337,7 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
         <h3 className="text-lg font-bold">Seção 3: Preferências Culturais</h3>
         <div className="space-y-4">
           <div>
-            <label htmlFor="generosMusicais" className="block font-medium mb-1 required-field">
+            <label htmlFor="generosMusicais" className="block font-medium mb-1">
               3. Quais são os seus gêneros musicais ou artistas favoritos?
             </label>
             <Textarea
@@ -391,12 +346,11 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               onChange={handleTextChange}
               placeholder="Resposta aberta"
               className="bg-gray-100"
-              required
             />
           </div>
           
           <div>
-            <label htmlFor="filmesTV" className="block font-medium mb-1 required-field">
+            <label htmlFor="filmesTV" className="block font-medium mb-1">
               4. Quais são os tipos de filmes ou programas de TV que você mais gosta de assistir?
             </label>
             <Textarea
@@ -405,12 +359,11 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               onChange={handleTextChange}
               placeholder="Resposta aberta"
               className="bg-gray-100"
-              required
             />
           </div>
           
           <div>
-            <p className="mb-2 font-medium required-field">5. Você gosta de participar de atividades sociais ou eventos, como encontros ou grupos de convivência?</p>
+            <p className="mb-2 font-medium">5. Você gosta de participar de atividades sociais ou eventos, como encontros ou grupos de convivência?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -418,7 +371,6 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
                   name="atividades-sociais"
                   checked={interesses.prefCulturais.atividadesSociais.participa === true}
                   onChange={() => handleAtividadesSociais(true)}
-                  required
                 />
                 <span>Sim</span>
               </label>
@@ -433,14 +385,13 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               </label>
               {interesses.prefCulturais.atividadesSociais.participa && (
                 <div className="mt-2">
-                  <label htmlFor="atividadesSociaisQuais" className="block required-field">Se sim, quais?</label>
+                  <label htmlFor="atividadesSociaisQuais" className="block">Se sim, quais?</label>
                   <input
                     type="text"
                     id="atividadesSociaisQuais"
                     value={interesses.prefCulturais.atividadesSociais.quais}
                     onChange={handleTextChange}
                     className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md mt-1"
-                    required
                   />
                 </div>
               )}
@@ -451,7 +402,7 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
         <h3 className="text-lg font-bold">Seção 4: Habilidades e Preferências</h3>
         <div className="space-y-4">
           <div>
-            <p className="mb-2 font-medium required-field">6. Você gosta de ensinar algo para os outros, como habilidades ou conhecimentos que você tem?</p>
+            <p className="mb-2 font-medium">6. Você gosta de ensinar algo para os outros, como habilidades ou conhecimentos que você tem?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -459,7 +410,6 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
                   name="gosta-ensinar"
                   checked={interesses.habilidadesPreferencias.gostaEnsinar.gosta === true}
                   onChange={() => handleGostaEnsinar(true)}
-                  required
                 />
                 <span>Sim</span>
               </label>
@@ -474,14 +424,13 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               </label>
               {interesses.habilidadesPreferencias.gostaEnsinar.gosta && (
                 <div className="mt-2">
-                  <label htmlFor="ensinoQuais" className="block required-field">Se sim, o que gostaria de ensinar?</label>
+                  <label htmlFor="ensinoQuais" className="block">Se sim, o que gostaria de ensinar?</label>
                   <input
                     type="text"
                     id="ensinoQuais"
                     value={interesses.habilidadesPreferencias.gostaEnsinar.oquePoderia}
                     onChange={handleTextChange}
                     className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md mt-1"
-                    required
                   />
                 </div>
               )}
@@ -489,7 +438,7 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
           </div>
           
           <div>
-            <p className="mb-2 font-medium required-field">7. Você se interessa por atividades que envolvam tecnologia (como uso de computador, internet ou dispositivos móveis)?</p>
+            <p className="mb-2 font-medium">7. Você se interessa por atividades que envolvam tecnologia (como uso de computador, internet ou dispositivos móveis)?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -497,7 +446,6 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
                   name="interesse-tecnologia"
                   checked={interesses.habilidadesPreferencias.interesseTecnologia.interessado === true}
                   onChange={() => handleInteresseTecnologia(true)}
-                  required
                 />
                 <span>Sim</span>
               </label>
@@ -512,14 +460,13 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
               </label>
               {interesses.habilidadesPreferencias.interesseTecnologia.interessado && (
                 <div className="mt-2">
-                  <label htmlFor="tecnologiaQuais" className="block required-field">Se sim, quais?</label>
+                  <label htmlFor="tecnologiaQuais" className="block">Se sim, quais?</label>
                   <input
                     type="text"
                     id="tecnologiaQuais"
                     value={interesses.habilidadesPreferencias.interesseTecnologia.quais}
                     onChange={handleTextChange}
                     className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md mt-1"
-                    required
                   />
                 </div>
               )}
@@ -529,16 +476,15 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
 
         <h3 className="text-lg font-bold">Seção 5: Comentários</h3>
         <div>
-          <label htmlFor="comentarios" className="block font-medium mb-1 required-field">
-            8. Comentários ou observações adicionais:
+          <label htmlFor="comentarios" className="block font-medium mb-1">
+            8. Existe algum hobby ou interesse que você gostaria de compartilhar ou que você gostaria de tentar no futuro?
           </label>
           <Textarea
             id="comentarios"
             value={interesses.comentarios}
             onChange={handleTextChange}
-            placeholder="Adicione qualquer informação adicional que considere relevante"
+            placeholder="Resposta aberta"
             className="bg-gray-100"
-            required
           />
         </div>
       </div>
@@ -555,10 +501,10 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
 
         <button 
           type="submit" 
-          className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
+          className="bg-[#0056a4] text-white py-3 px-12 rounded-full hover:bg-[#004483] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Enviando...' : 'Finalizar'}
+          {isSubmitting ? 'Enviando...' : 'Finalizar Cadastro'}
         </button>
       </div>
     </form>

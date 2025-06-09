@@ -11,6 +11,8 @@ interface FormInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   mask?: string;
   disabled?: boolean;
+  error?: string;
+  maxLength?: number;
 }
 
 const FormInput: React.FC<FormInputProps> = ({ 
@@ -22,7 +24,9 @@ const FormInput: React.FC<FormInputProps> = ({
   value,
   onChange,
   mask,
-  disabled = false
+  disabled = false,
+  error,
+  maxLength
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === 'password' && showPassword ? 'text' : type;
@@ -43,12 +47,18 @@ const FormInput: React.FC<FormInputProps> = ({
         <input
           type={inputType}
           id={id}
-          className="form-input w-full rounded-md border border-gray-300 px-4 py-2"
+          name={id}
+          className={`form-input w-full rounded-md border px-4 py-2 ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
           placeholder={placeholder}
           required={required}
           value={value}
           onChange={onChange}
           disabled={disabled}
+          maxLength={maxLength}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={error ? `${id}-error` : undefined}
         />
         {type === 'password' && (
           <button
@@ -61,6 +71,11 @@ const FormInput: React.FC<FormInputProps> = ({
           </button>
         )}
       </div>
+      {error && (
+        <p id={`${id}-error`} className="text-red-500 text-sm mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

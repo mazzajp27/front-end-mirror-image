@@ -70,7 +70,7 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
   const handleQuaisAtividadesFisicasChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAtividadesFisicas(prev => ({
       ...prev,
-      quais: e.target.value
+        quais: e.target.value
     }));
   };
 
@@ -85,7 +85,7 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
   const handleQuaisAtividadesSociaisChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAtividadesSociais(prev => ({
       ...prev,
-      quais: e.target.value
+        quais: e.target.value
     }));
   };
 
@@ -154,11 +154,11 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hobbiesOptions.map(hobby => (
               <label key={hobby.id} className="flex items-center space-x-2">
-                <Checkbox
+              <Checkbox 
                   id={hobby.id}
                   checked={hobbies.includes(hobby.id)}
                   onCheckedChange={() => handleHobbiesChange(hobby.id)}
-                />
+              />
                 <span>{hobby.label}</span>
               </label>
             ))}
@@ -168,28 +168,28 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
         <h3 className="text-lg font-bold">2. Atividades Físicas</h3>
         <div className="space-y-4">
           <p className="font-medium required-field">Pratica atividades físicas?</p>
-          <div className="space-y-1">
-            <label className="flex items-center space-x-2">
-              <input 
-                type="radio" 
+            <div className="space-y-1">
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
                 name="atividades-fisicas"
                 checked={atividadesFisicas.pratica === true}
                 onChange={() => handleAtividadesFisicasChange(true)}
                 required
-              />
-              <span>Sim</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input 
-                type="radio" 
+                />
+                <span>Sim</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
                 name="atividades-fisicas"
                 checked={atividadesFisicas.pratica === false}
                 onChange={() => handleAtividadesFisicasChange(false)}
-              />
-              <span>Não</span>
-            </label>
+                />
+                <span>Não</span>
+              </label>
             {atividadesFisicas.pratica && (
-              <div className="mt-2">
+                <div className="mt-2">
                 <label htmlFor="quais-atividades-fisicas" className="block required-field">Quais atividades?</label>
                 <Textarea
                   id="quais-atividades-fisicas"
@@ -198,37 +198,37 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
                   placeholder="Descreva as atividades físicas que pratica"
                   className="bg-gray-100"
                   required
-                />
-              </div>
-            )}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-
+          
         <h3 className="text-lg font-bold">3. Atividades Sociais</h3>
         <div className="space-y-4">
           <p className="font-medium required-field">Participa de atividades sociais?</p>
-          <div className="space-y-1">
-            <label className="flex items-center space-x-2">
-              <input 
-                type="radio" 
+            <div className="space-y-1">
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
                 name="atividades-sociais"
                 checked={atividadesSociais.participa === true}
                 onChange={() => handleAtividadesSociaisChange(true)}
                 required
-              />
-              <span>Sim</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input 
-                type="radio" 
+                />
+                <span>Sim</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input 
+                  type="radio" 
                 name="atividades-sociais"
                 checked={atividadesSociais.participa === false}
                 onChange={() => handleAtividadesSociaisChange(false)}
-              />
-              <span>Não</span>
-            </label>
+                />
+                <span>Não</span>
+              </label>
             {atividadesSociais.participa && (
-              <div className="mt-2">
+                <div className="mt-2">
                 <label htmlFor="quais-atividades-sociais" className="block required-field">Quais atividades?</label>
                 <Textarea
                   id="quais-atividades-sociais"
@@ -237,11 +237,11 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
                   placeholder="Descreva as atividades sociais que participa"
                   className="bg-gray-100"
                   required
-                />
-              </div>
-            )}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
         <h3 className="text-lg font-bold">4. Preferências e Rotina</h3>
         <div className="space-y-4">
@@ -258,7 +258,7 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="rotinaDiaria" className="block font-medium mb-1 required-field">
               Rotina diária:
@@ -272,22 +272,22 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="observacoesAdicionais" className="block font-medium mb-1">
               Observações adicionais:
-            </label>
+              </label>
             <Textarea
               id="observacoesAdicionais"
               value={preferencias.observacoesAdicionais}
               onChange={handlePreferenciasChange}
               placeholder="Outras informações relevantes que deseja compartilhar"
               className="bg-gray-100"
-            />
+                  />
           </div>
         </div>
       </div>
-
+      
       <div className="flex justify-between mt-10">
         <button 
           type="button"
@@ -299,7 +299,7 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
         </button>
 
         <button 
-          type="submit"
+          type="submit" 
           disabled={isSubmitting}
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

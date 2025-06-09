@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { toast } from 'sonner';
 import FormInput from '../FormInput';
 import SelectInput from '../SelectInput';
 import { CuidadorData } from '../../services/api';
+import { toast } from 'sonner';
+import { maskCPF, maskPhone, validateCPF, validatePhone } from '../../utils/masks';
 
 interface DadosCuidadorProps {
   data: CuidadorData;
@@ -14,29 +15,42 @@ interface DadosCuidadorProps {
 
 const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext }) => {
   const navigate = useNavigate();
-  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    if (id === 'confirmarSenha') {
-      setConfirmarSenha(value);
-    } else {
-      updateData({ [id]: value });
+    let formattedValue = value;
+    let error = '';
+
+    // Aplicar máscaras e validações
+    if (id === 'cpf') {
+      formattedValue = maskCPF(value);
+      if (value && !validateCPF(value)) {
+        error = 'CPF inválido';
+      }
+    } else if (id === 'telefone') {
+      formattedValue = maskPhone(value);
+      if (value && !validatePhone(value)) {
+        error = 'Telefone inválido';
+      }
     }
+
+    // Atualizar erros
+    setErrors(prev => ({
+      ...prev,
+      [id]: error
+    }));
+
+    // Atualizar dados
+    updateData({
+      ...data,
+      [id]: formattedValue
+    });
   };
 
-  const validatePassword = (password: string) => {
-    return password.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  };
-
-  const validateCPF = (cpf: string) => {
-    const numbers = cpf.replace(/\D/g, '');
-    return numbers.length === 11;
-  };
-
-  const validatePhone = (phone: string) => {
-    const numbers = phone.replace(/\D/g, '');
-    return numbers.length >= 11;
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmarSenha(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,26 +63,44 @@ const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext 
     }
 
     // Validar força da senha
-    if (!validatePassword(data.senha)) {
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(data.senha);
+    if (data.senha.length < 8 || !hasSpecialChar) {
       toast.error("A senha deve ter no mínimo 8 caracteres e conter pelo menos um caractere especial!");
       return;
     }
 
     // Validar CPF
     if (!validateCPF(data.cpf)) {
-      toast.error("O CPF deve conter exatamente 11 números!");
+      toast.error("CPF inválido!");
       return;
     }
 
     // Validar telefone
     if (!validatePhone(data.telefone)) {
-      toast.error("O telefone deve conter no mínimo 11 números!");
+      toast.error("Telefone inválido!");
       return;
     }
     
     // Validar campos obrigatórios
-    if (!data.nome || !data.cpf || !data.email || !data.dataNascimento || !data.telefone || !data.genero || !data.senha) {
-      toast.error("Por favor, preencha todos os campos obrigatórios!");
+    const requiredFields = ['nome', 'cpf', 'email', 'dataNascimento', 'telefone', 'genero', 'senha'];
+    const newErrors: {[key: string]: string} = {};
+    
+    requiredFields.forEach(field => {
+      if (!data[field]) {
+        newErrors[field] = 'Campo obrigatório';
+      }
+    });
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (data.email && !emailRegex.test(data.email)) {
+      newErrors.email = 'Email inválido';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Por favor, corrija os erros antes de continuar.');
       return;
     }
 
@@ -76,7 +108,7 @@ const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext 
   };
 
   const handleGoBack = () => {
-    navigate('/cadastro');
+    navigate('/tipo-cadastro');
   };
 
   const generoOptions = [
@@ -87,99 +119,109 @@ const DadosCuidador: React.FC<DadosCuidadorProps> = ({ data, updateData, onNext 
   ];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <FormInput 
-        label="Nome Completo"
-        type="text"
-        id="nome"
-        required
-        value={data.nome}
-        onChange={handleChange}
-      />
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormInput 
+          label="Nome Completo"
+          type="text"
+          id="nome"
+          required
+          value={data.nome || ''}
+          onChange={handleChange}
+          error={errors.nome}
+        />
+        
+        <FormInput 
+          label="CPF"
+          type="text"
+          id="cpf"
+          required
+          value={data.cpf || ''}
+          onChange={handleChange}
+          error={errors.cpf}
+          maxLength={14}
+          placeholder="000.000.000-00"
+        />
+        
+        <FormInput 
+          label="E-mail"
+          type="email"
+          id="email"
+          required
+          value={data.email || ''}
+          onChange={handleChange}
+          error={errors.email}
+          placeholder="exemplo@email.com"
+        />
+        
+        <FormInput 
+          label="Data de Nascimento"
+          type="date"
+          id="dataNascimento"
+          required
+          value={data.dataNascimento || ''}
+          onChange={handleChange}
+          error={errors.dataNascimento}
+        />
+        
+        <FormInput 
+          label="Número de Telefone"
+          type="text"
+          id="telefone"
+          required
+          value={data.telefone || ''}
+          onChange={handleChange}
+          error={errors.telefone}
+          maxLength={15}
+          placeholder="(00) 00000-0000"
+        />
+        
+        <SelectInput 
+          label="Gênero"
+          id="genero"
+          options={generoOptions}
+          required
+          value={data.genero || ''}
+          onChange={handleChange}
+          error={errors.genero}
+        />
+        
+        <FormInput 
+          label="Senha"
+          type="password"
+          id="senha"
+          required
+          value={data.senha || ''}
+          onChange={handleChange}
+          error={errors.senha}
+        />
+        
+        <FormInput 
+          label="Confirmar Senha"
+          type="password"
+          id="confirmarSenha"
+          required
+          value={confirmarSenha}
+          onChange={handleConfirmPasswordChange}
+          error={errors.confirmarSenha}
+        />
+      </div>
       
-      <FormInput 
-        label="CPF"
-        type="text"
-        id="cpf"
-        required
-        value={data.cpf}
-        onChange={handleChange}
-        mask="999.999.999-99"
-        placeholder="Digite os 11 números do CPF"
-      />
-      
-      <FormInput 
-        label="E-mail"
-        type="email"
-        id="email"
-        placeholder="exemplo@email.com"
-        required
-        value={data.email}
-        onChange={handleChange}
-      />
-      
-      <FormInput 
-        label="Data de Nascimento"
-        type="date"
-        id="dataNascimento"
-        required
-        value={data.dataNascimento}
-        onChange={handleChange}
-      />
-      
-      <FormInput 
-        label="Número de Telefone"
-        type="tel"
-        id="telefone"
-        required
-        value={data.telefone}
-        onChange={handleChange}
-        mask="(99) 99999-9999"
-        placeholder="Digite os 11 números do telefone"
-      />
-      
-      <SelectInput 
-        label="Gênero"
-        id="genero"
-        options={generoOptions}
-        required
-        value={data.genero}
-        onChange={handleChange}
-      />
-      
-      <FormInput 
-        label="Senha"
-        type="password"
-        id="senha"
-        required
-        value={data.senha}
-        onChange={handleChange}
-        placeholder="Mínimo 8 caracteres e 1 caractere especial"
-      />
-      
-      <FormInput 
-        label="Confirmar Senha"
-        type="password"
-        id="confirmarSenha"
-        required
-        value={confirmarSenha}
-        onChange={handleChange}
-      />
-
       <div className="flex justify-between mt-10">
         <button 
           type="button"
           onClick={handleGoBack}
-          className="bg-gray-300 text-gray-700 py-3 px-12 rounded-full hover:bg-gray-400 transition-colors"
+          className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
         >
+          <ArrowLeft size={18} />
           Voltar
         </button>
 
         <button 
-          type="submit"
+          type="submit" 
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
         >
-          Próximo
+          Avançar
           <ArrowRight size={18} />
         </button>
       </div>

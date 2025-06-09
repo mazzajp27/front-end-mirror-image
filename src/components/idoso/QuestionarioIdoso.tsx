@@ -206,7 +206,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       return;
     }
@@ -261,7 +261,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="saude-restricoesAlimentares" className="block font-medium mb-1 required-field">
               Restrições alimentares:
@@ -275,7 +275,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="saude-mobilidadeRestricoes" className="block font-medium mb-1 required-field">
               Restrições de mobilidade:
@@ -293,7 +293,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
 
         <h3 className="text-lg font-bold">2. Necessidades de Cuidado</h3>
         <div className="space-y-4">
-          <div>
+            <div>
             <p className="mb-2 font-medium required-field">Precisa de auxílio com atividades diárias?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
@@ -330,7 +330,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               )}
             </div>
           </div>
-
+          
           <div>
             <p className="mb-2 font-medium required-field">Precisa de auxílio com medicação?</p>
             <div className="space-y-1">
@@ -368,7 +368,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               )}
             </div>
           </div>
-
+          
           <div>
             <p className="mb-2 font-medium required-field">Necessita de monitoramento de sinais vitais?</p>
             <div className="space-y-1">
@@ -423,7 +423,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="pref-frequenciaCuidado" className="block font-medium mb-1 required-field">
               Frequência do cuidado:
@@ -437,7 +437,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="pref-caracteristicasCuidador" className="block font-medium mb-1 required-field">
               Características desejadas do cuidador:
@@ -451,7 +451,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
               required
             />
           </div>
-
+          
           <div>
             <label htmlFor="pref-observacoesAdicionais" className="block font-medium mb-1">
               Observações adicionais:
@@ -466,7 +466,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
           </div>
         </div>
       </div>
-
+      
       <div className="flex justify-between mt-10">
         <button 
           type="button"
@@ -478,7 +478,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
         </button>
 
         <button 
-          type="submit"
+          type="submit" 
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
         >
           Próximo

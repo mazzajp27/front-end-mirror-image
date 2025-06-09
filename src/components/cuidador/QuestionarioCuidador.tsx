@@ -75,7 +75,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     // Validar formação acadêmica
     if (!formacaoAcademica.cursos || !formacaoAcademica.instituicao || !formacaoAcademica.area) {
       toast.error("Por favor, preencha todos os campos da formação acadêmica!");
@@ -205,7 +205,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-certificacao"
+                  name="possui-certificacao" 
                   checked={experienciaProfissional.possuiCertificacao === true}
                   onChange={() => setExperienciaProfissional(prev => ({...prev, possuiCertificacao: true}))}
                   required
@@ -215,7 +215,7 @@ const QuestionarioCuidador: React.FC<QuestionarioCuidadorProps> = ({
               <label className="flex items-center space-x-2">
                 <input 
                   type="radio" 
-                  name="possui-certificacao"
+                  name="possui-certificacao" 
                   checked={experienciaProfissional.possuiCertificacao === false}
                   onChange={() => setExperienciaProfissional(prev => ({...prev, possuiCertificacao: false}))}
                 />

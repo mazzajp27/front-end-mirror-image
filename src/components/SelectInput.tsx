@@ -13,6 +13,7 @@ interface SelectInputProps {
   required?: boolean;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  error?: string;
 }
 
 const SelectInput: React.FC<SelectInputProps> = ({ 
@@ -21,7 +22,8 @@ const SelectInput: React.FC<SelectInputProps> = ({
   options,
   required = false,
   value,
-  onChange
+  onChange,
+  error
 }) => {
   return (
     <div className="mb-6">
@@ -34,12 +36,17 @@ const SelectInput: React.FC<SelectInputProps> = ({
       <div className="relative">
         <select
           id={id}
-          className="form-input appearance-none"
+          name={id}
           required={required}
           value={value}
           onChange={onChange}
+          className={`form-input appearance-none w-full rounded-md border px-4 py-2 ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={error ? `${id}-error` : undefined}
         >
-          <option value="" disabled>Selecione</option>
+          <option value="">Selecione</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -50,6 +57,11 @@ const SelectInput: React.FC<SelectInputProps> = ({
           <ChevronDown size={18} />
         </div>
       </div>
+      {error && (
+        <p id={`${id}-error`} className="text-red-500 text-sm mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 };
