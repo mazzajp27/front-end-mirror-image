@@ -22,12 +22,13 @@ const HomePage: React.FC = () => {
       {/* Header/Navigation */}
       <header className="bg-white py-4 px-6 shadow-sm" role="banner">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
+          <div className="flex flex-col items-center justify-center text-center">
             <img 
               src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
               alt="Amigo Cuidador Logo" 
-              className="h-28 w-auto"
+              className="h-14 w-auto max-h-16 md:h-16 md:max-h-20 lg:h-20 lg:max-h-24 mb-2"
             />
+            <span className="text-[#0056a4] text-base md:text-lg lg:text-xl font-semibold tracking-wide">Cuidando de quem sempre cuidou de você</span>
           </div>
           
           <nav className="flex items-center space-x-6" role="navigation" aria-label="Menu principal">
@@ -128,7 +129,30 @@ const HomePage: React.FC = () => {
                 </svg>
               </button>
               <button
-                onClick={() => navigate('/contato')}
+                onClick={() => navigate('/cuidadores')}
+                className="bg-[#00c853] text-white px-8 py-4 rounded-lg hover:bg-[#009624] transition-colors flex items-center gap-2 text-xl focus:outline-none focus:ring-2 focus:ring-[#00c853] focus:ring-offset-2"
+                aria-label="Ver cuidadores disponíveis"
+              >
+                Ver Cuidadores
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </button>
+              <button
+                onClick={() => navigate('/canal-suporte')}
                 className="bg-white text-gray-800 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors text-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2"
                 aria-label="Entre em contato conosco"
               >

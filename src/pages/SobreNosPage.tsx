@@ -72,7 +72,7 @@ const SobreNosPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
           <div>
             <img 
-              src="/lovable-uploads/b8f5f3a2-7c1d-4c3b-a4b2-89d8f4f3e7d1.png"
+              src="/lovable-uploads/12b87f5c-30c6-4ef0-99dc-8ff0848721f5.png"
               alt="Equipe Amigo Cuidador" 
               className="rounded-2xl shadow-xl w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-300"
             />
@@ -81,7 +81,7 @@ const SobreNosPage: React.FC = () => {
             <h2 className="text-3xl font-semibold text-[#0056a4] mb-6">Nossa História</h2>
             <p className="text-xl text-gray-700 leading-relaxed">
               O Amigo Cuidador nasceu da percepção de que muitas famílias enfrentam dificuldades para cuidar 
-              adequadamente de seus entes queridos idosos. Fundada em 2015 por um grupo de profissionais da saúde 
+              adequadamente de seus entes queridos idosos. Fundada em 2025 por um grupo de estudantes da área da tecnologia 
               apaixonados por cuidados geriátricos, nossa empresa tem como missão proporcionar bem-estar, 
               dignidade e qualidade de vida para idosos e tranquilidade para suas famílias.
             </p>
