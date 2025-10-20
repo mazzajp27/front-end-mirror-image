@@ -294,7 +294,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
         <h3 className="text-lg font-bold">2. Necessidades de Cuidado</h3>
         <div className="space-y-4">
             <div>
-            <p className="mb-2 font-medium required-field">Precisa de auxílio com atividades diárias?</p>
+            <p className="mb-2 font-medium required-field">O idoso precisa de auxílio com atividades diárias?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -332,7 +332,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
           </div>
           
           <div>
-            <p className="mb-2 font-medium required-field">Precisa de auxílio com medicação?</p>
+            <p className="mb-2 font-medium required-field">O idoso precisa de auxílio com medicação?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 
@@ -370,7 +370,7 @@ const QuestionarioIdoso: React.FC<QuestionarioIdosoProps> = ({
           </div>
           
           <div>
-            <p className="mb-2 font-medium required-field">Necessita de monitoramento de sinais vitais?</p>
+            <p className="mb-2 font-medium required-field">O idoso necessita de monitoramento de sinais vitais?</p>
             <div className="space-y-1">
               <label className="flex items-center space-x-2">
                 <input 

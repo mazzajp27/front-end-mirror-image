@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import FormInput from '../FormInput';
 import SelectInput from '../SelectInput';
 import { ContratanteData } from '../../services/api';
 import { toast } from 'sonner';
+import { maskCPF, maskPhone, validateCPF, validatePhone } from '../../utils/masks';
 
 interface DadosIdosoProps {
   data: ContratanteData;
@@ -16,6 +18,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({
   updateData, 
   onNext 
 }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nome: data.nome || '',
     cpf: data.cpf || '',
@@ -27,40 +30,33 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({
     genero: data.genero || '',
     data_nascimento: data.data_nascimento || ''
   });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    let processedValue = value;
+    let formattedValue = value;
+    let error = '';
 
-    // Aplicar formatação específica baseada no campo
     if (id === 'cpf') {
-      // Remove caracteres não numéricos
-      const numbersOnly = value.replace(/\D/g, '').slice(0, 11);
-      
-      // Aplica a formatação enquanto digita
-      processedValue = numbersOnly.replace(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2}).*/, (_, p1, p2, p3, p4) => {
-        if (p4) return `${p1}.${p2}.${p3}-${p4}`;
-        if (p3) return `${p1}.${p2}.${p3}`;
-        if (p2) return `${p1}.${p2}`;
-        return p1;
-      }).replace(/[.-]$/, '');
-
+      formattedValue = maskCPF(value);
+      if (value && !validateCPF(value)) {
+        error = 'CPF inválido';
+      }
     } else if (id === 'telefone' || id === 'telefone_emergencia') {
-      // Remove caracteres não numéricos
-      const numbersOnly = value.replace(/\D/g, '').slice(0, 11);
-      
-      // Aplica a formatação enquanto digita
-      processedValue = numbersOnly.replace(/^(\d{0,2})(\d{0,5})(\d{0,4}).*/, (_, ddd, prefix, suffix) => {
-        if (suffix) return `(${ddd}) ${prefix}-${suffix}`;
-        if (prefix) return `(${ddd}) ${prefix}`;
-        if (ddd) return `(${ddd}`;
-        return ddd;
-      }).replace(/[()-]$/, '');
+      formattedValue = maskPhone(value);
+      if (value && !validatePhone(value)) {
+        error = 'Telefone inválido';
+      }
     }
+
+    setErrors(prev => ({
+      ...prev,
+      [id]: error
+    }));
 
     setFormData(prev => ({
       ...prev,
-      [id]: processedValue
+      [id]: formattedValue
     }));
   };
 
@@ -72,8 +68,7 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({
     }
 
     // Validar CPF
-    const cpfNumbers = formData.cpf.replace(/\D/g, '');
-    if (!cpfNumbers || cpfNumbers.length !== 11) {
+    if (!validateCPF(formData.cpf)) {
       toast.error('Por favor, insira um CPF válido');
       return false;
     }
@@ -87,14 +82,14 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({
 
     // Validar telefone
     const phoneNumbers = formData.telefone.replace(/\D/g, '');
-    if (!phoneNumbers || phoneNumbers.length < 10 || phoneNumbers.length > 11) {
+    if (!validatePhone(formData.telefone)) {
       toast.error('Por favor, insira um telefone válido com DDD');
       return false;
     }
 
     // Validar telefone de emergência
     const emergencyPhoneNumbers = formData.telefone_emergencia.replace(/\D/g, '');
-    if (!emergencyPhoneNumbers || emergencyPhoneNumbers.length < 10 || emergencyPhoneNumbers.length > 11) {
+    if (!validatePhone(formData.telefone_emergencia)) {
       toast.error('Por favor, insira um telefone de emergência válido com DDD');
       return false;
     }
@@ -163,104 +158,130 @@ const DadosIdoso: React.FC<DadosIdosoProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <FormInput
-        label="Nome Completo"
-        id="nome"
-        type="text"
-        value={formData.nome}
-        onChange={handleChange}
-        required
-      />
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormInput 
+          label="Nome Completo"
+          type="text"
+          id="nome"
+          required
+          value={formData.nome}
+          onChange={handleChange}
+          error={errors.nome}
+        />
 
-      <FormInput
-        label="CPF"
-        id="cpf"
-        type="text"
-        value={formData.cpf}
-        onChange={handleChange}
-        placeholder="Digite apenas números"
-        required
-      />
+        <FormInput 
+          label="CPF"
+          type="text"
+          id="cpf"
+          required
+          value={formData.cpf}
+          onChange={handleChange}
+          error={errors.cpf}
+          maxLength={14}
+          placeholder="000.000.000-00"
+        />
 
-      <FormInput
-        label="Email"
-        id="email"
-        type="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
+        <FormInput 
+          label="E-mail"
+          type="email"
+          id="email"
+          required
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+          placeholder="exemplo@email.com"
+        />
 
-      <FormInput
-        label="Telefone"
-        id="telefone"
-        type="text"
-        value={formData.telefone}
-        onChange={handleChange}
-        placeholder="Digite apenas números"
-        required
-      />
+        <FormInput 
+          label="Data de Nascimento"
+          type="date"
+          id="data_nascimento"
+          required
+          value={formData.data_nascimento}
+          onChange={handleChange}
+          error={errors.data_nascimento}
+        />
 
-      <FormInput
-        label="Telefone de Emergência"
-        id="telefone_emergencia"
-        type="text"
-        value={formData.telefone_emergencia}
-        onChange={handleChange}
-        placeholder="Digite apenas números (diferente do telefone principal)"
-        required
-      />
+        <FormInput 
+          label="Número de Telefone"
+          type="text"
+          id="telefone"
+          required
+          value={formData.telefone}
+          onChange={handleChange}
+          error={errors.telefone}
+          maxLength={15}
+          placeholder="(00) 00000-0000"
+        />
 
-      <FormInput
-        label="Senha"
-        id="senha"
-        type="password"
-        value={formData.senha}
-        onChange={handleChange}
-        placeholder="Mínimo 8 caracteres e 1 caractere especial"
-        required
-      />
+        <SelectInput 
+          label="Gênero"
+          id="genero"
+          options={[
+            { value: 'masculino', label: 'Masculino' },
+            { value: 'feminino', label: 'Feminino' },
+            { value: 'outro', label: 'Outro' },
+            { value: 'prefiro-nao-informar', label: 'Prefiro não informar' }
+          ]}
+          required
+          value={formData.genero}
+          onChange={handleChange}
+          error={errors.genero}
+        />
 
-      <FormInput
-        label="Confirmar Senha"
-        id="confirmarSenha"
-        type="password"
-        value={formData.confirmarSenha}
-        onChange={handleChange}
-        required
-      />
+        <FormInput 
+          label="Senha"
+          type="password"
+          id="senha"
+          required
+          value={formData.senha}
+          onChange={handleChange}
+          error={errors.senha}
+        />
 
-      <SelectInput
-        label="Gênero"
-        id="genero"
-        value={formData.genero}
-        onChange={handleChange}
-        required
-        options={[
-          { value: '', label: 'Selecione um gênero' },
-          { value: 'masculino', label: 'Masculino' },
-          { value: 'feminino', label: 'Feminino' },
-          { value: 'outro', label: 'Outro' },
-          { value: 'prefiro_nao_dizer', label: 'Prefiro não dizer' }
-        ]}
-      />
+        <FormInput 
+          label="Confirmar Senha"
+          type="password"
+          id="confirmarSenha"
+          required
+          value={formData.confirmarSenha}
+          onChange={e => setFormData(prev => ({ ...prev, confirmarSenha: (e.target as HTMLInputElement).value }))}
+          error={errors.confirmarSenha}
+        />
 
-      <FormInput
-        label="Data de Nascimento"
-        id="data_nascimento"
-        type="date"
-        value={formData.data_nascimento}
-        onChange={handleChange}
-        required
-      />
+        <div className="md:col-span-2">
+          <div className="md:w-1/2 md:mx-auto">
+            <FormInput 
+              label="Telefone de Emergência"
+              type="text"
+              id="telefone_emergencia"
+              required
+              value={formData.telefone_emergencia}
+              onChange={handleChange}
+              error={errors.telefone_emergencia}
+              maxLength={15}
+              placeholder="(00) 00000-0000"
+            />
+          </div>
+        </div>
+      </div>
 
-      <div className="flex justify-end mt-10">
+      <div className="flex justify-between mt-10">
         <button 
-          type="submit"
+          type="button"
+          onClick={() => navigate('/tipo-cadastro')}
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
         >
-          Próximo
+          <ArrowLeft size={18} />
+          Voltar
+        </button>
+
+        <button 
+          type="submit" 
+          className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
+        >
+          Avançar
           <ArrowRight size={18} />
         </button>
       </div>

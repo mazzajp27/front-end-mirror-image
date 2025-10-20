@@ -87,7 +87,6 @@ const EnderecoCuidador: React.FC<EnderecoCuidadorProps> = ({ data, updateData, o
           value={data.cep || ''}
           onChange={handleChange}
           mask="99999-999"
-          placeholder="Digite o CEP para autocompletar"
           disabled={isLoadingCep}
         />
 
@@ -147,6 +146,7 @@ const EnderecoCuidador: React.FC<EnderecoCuidadorProps> = ({ data, updateData, o
           required
           value={data.complemento || ''}
           onChange={handleChange}
+          placeholder="Apartamento, bloco, etc."
         />
         
         <FormInput 
@@ -155,6 +155,7 @@ const EnderecoCuidador: React.FC<EnderecoCuidadorProps> = ({ data, updateData, o
           id="referencia"
           value={data.referencia || ''}
           onChange={handleChange}
+          placeholder="Ex: Próximo ao mercado, farmácia, etc."
         />
       </div>
       

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import FormInput from '../FormInput';
-import SelectInput from '../SelectInput';
 import { ContratanteData } from '../../services/api';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -151,112 +150,88 @@ const EnderecoIdoso: React.FC<EnderecoIdosoProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <FormInput
-        label="CEP"
-        id="cep"
-        type="text"
-        value={formData.cep}
-        onChange={handleChange}
-        placeholder="Digite apenas números"
-        mask={formData.cep ? formatCep(formData.cep) : ''}
-        required
-        disabled={isLoading}
-      />
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormInput 
+          label="CEP"
+          type="text"
+          id="cep"
+          required
+          value={formData.cep}
+          onChange={handleChange}
+          mask="99999-999"
+          disabled={isLoading}
+        />
 
-      <SelectInput
-        label="Estado"
-        id="estado"
-        value={formData.estado}
-        onChange={handleChange}
-        required
-        options={[
-          { value: '', label: 'Selecione um estado' },
-          { value: 'AC', label: 'Acre' },
-          { value: 'AL', label: 'Alagoas' },
-          { value: 'AP', label: 'Amapá' },
-          { value: 'AM', label: 'Amazonas' },
-          { value: 'BA', label: 'Bahia' },
-          { value: 'CE', label: 'Ceará' },
-          { value: 'DF', label: 'Distrito Federal' },
-          { value: 'ES', label: 'Espírito Santo' },
-          { value: 'GO', label: 'Goiás' },
-          { value: 'MA', label: 'Maranhão' },
-          { value: 'MT', label: 'Mato Grosso' },
-          { value: 'MS', label: 'Mato Grosso do Sul' },
-          { value: 'MG', label: 'Minas Gerais' },
-          { value: 'PA', label: 'Pará' },
-          { value: 'PB', label: 'Paraíba' },
-          { value: 'PR', label: 'Paraná' },
-          { value: 'PE', label: 'Pernambuco' },
-          { value: 'PI', label: 'Piauí' },
-          { value: 'RJ', label: 'Rio de Janeiro' },
-          { value: 'RN', label: 'Rio Grande do Norte' },
-          { value: 'RS', label: 'Rio Grande do Sul' },
-          { value: 'RO', label: 'Rondônia' },
-          { value: 'RR', label: 'Roraima' },
-          { value: 'SC', label: 'Santa Catarina' },
-          { value: 'SP', label: 'São Paulo' },
-          { value: 'SE', label: 'Sergipe' },
-          { value: 'TO', label: 'Tocantins' }
-        ]}
-      />
-
-      <FormInput
-        label="Cidade"
-        id="cidade"
-        type="text"
-        value={formData.cidade}
-        onChange={handleChange}
-        required
-      />
-
-      <FormInput
-        label="Bairro"
-        id="bairro"
-        type="text"
-        value={formData.bairro}
-        onChange={handleChange}
-        required
-      />
-
-      <FormInput
-        label="Endereço"
-        id="endereco"
-        type="text"
-        value={formData.endereco}
-        onChange={handleChange}
-        required
-      />
-
-      <FormInput
-        label="Número"
-        id="numero"
-        type="text"
-        value={formData.numero}
-        onChange={handleChange}
-        required
-      />
-
-      <FormInput
-        label="Complemento"
-        id="complemento"
-        type="text"
-        value={formData.complemento}
-        onChange={handleChange}
-        placeholder="Apartamento, bloco, etc."
-        required
-      />
-
-      <FormInput
-        label="Ponto de Referência"
-        id="referencia"
-        type="text"
-        value={formData.referencia}
-        onChange={handleChange}
-        placeholder="Ex: Próximo ao mercado, farmácia, etc. (opcional)"
-      />
-
+        <FormInput 
+          label="Estado"
+          type="text"
+          id="estado"
+          required
+          value={formData.estado}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+        
+        <FormInput 
+          label="Cidade"
+          type="text"
+          id="cidade"
+          required
+          value={formData.cidade}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+        
+        <FormInput 
+          label="Bairro"
+          type="text"
+          id="bairro"
+          required
+          value={formData.bairro}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+        
+        <FormInput 
+          label="Endereço"
+          type="text"
+          id="endereco"
+          required
+          value={formData.endereco}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
+        
+        <FormInput 
+          label="Número"
+          type="text"
+          id="numero"
+          required
+          value={formData.numero}
+          onChange={handleChange}
+        />
+        
+        <FormInput 
+          label="Complemento"
+          type="text"
+          id="complemento"
+          required
+          value={formData.complemento}
+          onChange={handleChange}
+          placeholder="Apartamento, bloco, etc."
+        />
+        
+        <FormInput 
+          label="Referência"
+          type="text"
+          id="referencia"
+          value={formData.referencia}
+          onChange={handleChange}
+          placeholder="Ex: Próximo ao mercado, farmácia, etc."
+        />
+      </div>
+      
       <div className="flex justify-between mt-10">
         <button 
           type="button"
@@ -268,10 +243,11 @@ const EnderecoIdoso: React.FC<EnderecoIdosoProps> = ({
         </button>
 
         <button 
-          type="submit"
+          type="submit" 
           className="bg-[#0056a4] text-white py-3 px-12 rounded-full flex items-center gap-2 hover:bg-[#004483] transition-colors"
+          disabled={isLoading}
         >
-          Próximo
+          Avançar
           <ArrowRight size={18} />
         </button>
       </div>

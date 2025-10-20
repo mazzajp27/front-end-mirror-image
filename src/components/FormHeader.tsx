@@ -5,7 +5,7 @@ interface FormHeaderProps {
   title?: string;
 }
 
-const FormHeader: React.FC<FormHeaderProps> = ({ title = "Formulário Cuidador" }) => {
+const FormHeader: React.FC<FormHeaderProps> = ({ title = "Cadastro do Cuidador" }) => {
   return (
     <div className="flex flex-col items-center mb-8">
       <div className="mb-4">

@@ -121,7 +121,7 @@ const IdosoForm: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container max-w-3xl mx-auto px-4">
-        <FormHeader title="Cadastro do Idoso" />
+        <FormHeader title="Cadastro do contratante" />
         
         <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 mt-6">
           <StepIndicator

@@ -81,7 +81,7 @@ const CuidadorForm: React.FC = () => {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
-      <FormHeader title="Formulário Cuidador" />
+      <FormHeader title="Cadastro do Cuidador" />
       <StepIndicator 
         currentStep={currentStep} 
         steps={steps} 

@@ -63,9 +63,11 @@ const FormInput: React.FC<FormInputProps> = ({
         {type === 'password' && (
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={togglePasswordVisibility}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             disabled={disabled}
+            aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

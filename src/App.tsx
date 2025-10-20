@@ -15,6 +15,7 @@ import SobreNosPage from "./pages/SobreNosPage";
 import AddressForm from './components/AddressForm';
 import CuidadoresPage from "./pages/CuidadoresPage";
 import CanalSuportePage from "./pages/CanalSuportePage";
+import MessagesPage from "./pages/MessagesPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/address/:contratanteId" element={<AddressForm />} />
           <Route path="/cuidadores" element={<CuidadoresPage />} />
           <Route path="/canal-suporte" element={<CanalSuportePage />} />
+          <Route path="/mensagens" element={<MessagesPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

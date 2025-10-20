@@ -11,11 +11,17 @@ const ServicosPage: React.FC = () => {
       <header className="bg-white py-4 px-6 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
-              alt="Amigo Cuidador Logo" 
-              className="h-28 w-auto"
-            />
+            <button
+              onClick={() => navigate('/')}
+              className="hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2 rounded-lg"
+              aria-label="Voltar para página inicial"
+            >
+              <img 
+                src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
+                alt="Amigo Cuidador Logo" 
+                className="h-28 w-auto"
+              />
+            </button>
           </div>
           
           <nav className="flex items-center space-x-6">
