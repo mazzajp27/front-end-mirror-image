@@ -11,6 +11,20 @@ const api = axios.create({
   },
 });
 
+// Interceptor para adicionar o token de autenticação em todas as requisições
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interface para tipagem dos dados do cuidador
 export interface CuidadorData {
   nome: string;
@@ -160,12 +174,45 @@ export interface LoginResponse {
   token: string;
 }
 
+// Interface para resposta da API de cuidador
+export interface CuidadorResponse {
+  id_cuidador: number;
+  nome: string;
+  cpf: string;
+  email: string;
+  telefone: string;
+  genero?: string;
+  data_nascimento?: string;
+}
+
 // Serviço para cuidadores
 export const cuidadorService = {
+  // Listar todos os cuidadores
+  listar: async (): Promise<CuidadorResponse[]> => {
+    try {
+      const response = await api.get('/cuidadores/');
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao listar cuidadores:', error);
+      throw error;
+    }
+  },
+
+  // Buscar cuidador por ID
+  buscarPorId: async (id: number): Promise<CuidadorResponse> => {
+    try {
+      const response = await api.get(`/cuidadores/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar cuidador:', error);
+      throw error;
+    }
+  },
+
   // Cadastrar novo cuidador
   cadastrar: async (cuidadorData: CuidadorData) => {
     try {
-      const response = await api.post('/cuidadores', cuidadorData);
+      const response = await api.post('/cuidadores/', cuidadorData);
       return response.data;
     } catch (error) {
       console.error('Erro ao cadastrar cuidador:', error);
@@ -176,7 +223,7 @@ export const cuidadorService = {
   // Atualizar dados do cuidador
   atualizar: async (id: string, cuidadorData: Partial<CuidadorData>) => {
     try {
-      const response = await api.put(`/cuidadores/${id}`, cuidadorData);
+      const response = await api.put(`/cuidador/${id}`, cuidadorData);
       return response.data;
     } catch (error) {
       console.error('Erro ao atualizar cuidador:', error);
