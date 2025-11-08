@@ -4,7 +4,6 @@ import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { authService, LoginData } from '../services/api';
-import { Button } from './ui/button';
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -35,8 +34,23 @@ const LoginForm: React.FC = () => {
       setIsSubmitting(true);
       const response = await authService.login(formData);
       localStorage.setItem('token', response.token);
+      localStorage.setItem('userType', response.tipo_usuario);
+      localStorage.setItem('userId', response.id.toString());
+      localStorage.setItem('userName', response.nome);
+      
+      // Dispara evento customizado para atualizar o Header
+      window.dispatchEvent(new Event('auth-change'));
+      
       toast.success("Login realizado com sucesso!");
-      navigate('/dashboard'); // Redireciona para o dashboard após login
+      
+      // Redireciona baseado no tipo de usuário
+      if (response.tipo_usuario === 'contratante') {
+        navigate('/cuidadores'); // Contratantes veem cuidadores disponíveis
+      } else if (response.tipo_usuario === 'cuidador') {
+        navigate('/'); // Cuidadores vão para a página inicial
+      } else {
+        navigate('/'); // Fallback para página inicial
+      }
     } catch (error: any) {
       console.error('Erro durante o login:', error);
       toast.error(error.response?.data?.message || "E-mail ou senha incorretos. Tente novamente.");

@@ -151,6 +151,15 @@ export interface LoginData {
   senha: string;
 }
 
+// Interface para tipagem da resposta do login
+export interface LoginResponse {
+  id: number;
+  nome: string;
+  email: string;
+  tipo_usuario: 'contratante' | 'cuidador';
+  token: string;
+}
+
 // Serviço para cuidadores
 export const cuidadorService = {
   // Cadastrar novo cuidador
@@ -236,9 +245,9 @@ export const contratanteService = {
 
 // Serviço de autenticação
 export const authService = {
-  login: async (loginData: LoginData) => {
+  login: async (loginData: LoginData): Promise<LoginResponse> => {
     try {
-      const response = await api.post('/auth/login', loginData);
+      const response = await api.post<LoginResponse>('/auth/login', loginData);
       return response.data;
     } catch (error) {
       console.error('Erro ao realizar login:', error);

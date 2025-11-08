@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, MapPin, Clock, Phone, MessageCircle, Heart, Filter, Search, Award, Shield, Users } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, MessageCircle, Heart, Filter, Search, Award, Shield, Users, User, LogOut } from 'lucide-react';
 
 interface Cuidador {
   id: string;
@@ -26,6 +26,50 @@ const CuidadoresPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('userName');
+    
+    if (token && name) {
+      setIsLoggedIn(true);
+      setUserName(name);
+    } else {
+      setIsLoggedIn(false);
+      setUserName(null);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+    
+    // Listener para evento customizado (quando login/logout acontece)
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+    
+    window.addEventListener('auth-change', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('auth-change', handleAuthChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userType');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    
+    // Dispara evento customizado para atualizar outros componentes
+    window.dispatchEvent(new Event('auth-change'));
+    
+    setIsLoggedIn(false);
+    setUserName(null);
+    navigate('/');
+  };
 
   const cuidadores: Cuidador[] = [
     {
@@ -154,6 +198,41 @@ const CuidadoresPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              {isLoggedIn ? (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-[#0056a4]">
+                    <User size={20} />
+                    <span className="text-lg font-medium">Olá, {userName}</span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 text-[#0056a4] hover:text-[#003d74] text-lg focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2 rounded-md px-3 py-2 hover:bg-gray-100 transition-colors"
+                    aria-label="Sair da conta"
+                  >
+                    <LogOut size={18} />
+                    Sair
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/tipo-cadastro')}
+                    className="bg-[#0056a4] text-white px-4 py-2 rounded-lg hover:bg-[#004483] transition-colors"
+                  >
+                    Cadastre-se
+                  </button>
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="flex items-center gap-2 text-[#0056a4] hover:text-[#003d74]"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Entrar
+                  </button>
+                </>
+              )}
               <img 
                 src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
                 alt="Amigo Cuidador Logo" 
