@@ -1,73 +1,13 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 const ServicosPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header/Navigation */}
-      <header className="bg-white py-4 px-6 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <button
-              onClick={() => navigate('/')}
-              className="hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2 rounded-lg"
-              aria-label="Voltar para página inicial"
-            >
-              <img 
-                src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
-                alt="Amigo Cuidador Logo" 
-                className="h-28 w-auto"
-              />
-            </button>
-          </div>
-          
-          <nav className="flex items-center space-x-6">
-            <a 
-              href="/" 
-              className={`text-[#0056a4] hover:text-[#003d74] text-xl ${location.pathname === '/' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
-            >
-              Início
-            </a>
-            <a 
-              href="/servicos" 
-              className={`text-[#0056a4] hover:text-[#003d74] text-xl ${location.pathname === '/servicos' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
-            >
-              Serviços
-            </a>
-            <a 
-              href="/sobre-nos" 
-              className={`text-[#0056a4] hover:text-[#003d74] text-xl ${location.pathname === '/sobre-nos' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
-            >
-              Sobre nós
-            </a>
-            <a 
-              href="/avaliacoes" 
-              className={`text-[#0056a4] hover:text-[#003d74] text-xl ${location.pathname === '/avaliacoes' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
-            >
-              Avaliações
-            </a>
-            <button
-              onClick={() => navigate('/tipo-cadastro')}
-              className="bg-[#0056a4] text-white px-6 py-3 rounded-lg hover:bg-[#004483] transition-colors text-xl"
-            >
-              Cadastre-se
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              className="flex items-center gap-2 text-[#0056a4] hover:text-[#003d74] text-xl"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              Entrar
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-b from-white to-gray-50">
         <section className="mt-8">
