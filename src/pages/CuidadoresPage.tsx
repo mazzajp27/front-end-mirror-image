@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, MapPin, Clock, Phone, MessageCircle, Heart, Filter, Search, Award, Shield, Users, User, LogOut, Loader2 } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, MessageCircle, Heart, Filter, Search, Award, Shield, Users, User, LogOut, Loader2, Eye } from 'lucide-react';
 import { cuidadorService, CuidadorResponse } from '../services/api';
 import { toast } from 'sonner';
+import CuidadorDetailsModal from '../components/CuidadorDetailsModal';
 
 interface Cuidador {
   id: string;
@@ -33,6 +34,8 @@ const CuidadoresPage = () => {
   const [cuidadores, setCuidadores] = useState<Cuidador[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCuidador, setSelectedCuidador] = useState<{ id: number; name: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const checkAuth = () => {
     const token = localStorage.getItem('token');
@@ -165,6 +168,16 @@ const CuidadoresPage = () => {
       cuidadorRole: 'Cuidador'
     });
     navigate(`/mensagens?${params.toString()}`);
+  };
+
+  const handleViewDetails = (cuidador: Cuidador) => {
+    setSelectedCuidador({ id: parseInt(cuidador.id), name: cuidador.name });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCuidador(null);
   };
 
   return (
@@ -382,20 +395,29 @@ const CuidadoresPage = () => {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleContact(cuidador)}
-                          className="flex-1 bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors flex items-center justify-center gap-2"
-                        >
-                          <MessageCircle size={16} />
-                          Contatar
-                        </button>
-                        <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-                          <Phone size={16} />
-                          Ligar
-                        </button>
-                      </div>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => handleViewDetails(cuidador)}
+                    className="w-full bg-[#00c853] text-white py-2 px-4 rounded-lg hover:bg-[#009624] transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Eye size={16} />
+                    Ver Mais Informações
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleContact(cuidador)}
+                      className="flex-1 bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle size={16} />
+                      Contatar
+                    </button>
+                    <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                      <Phone size={16} />
+                      Ligar
+                    </button>
+                  </div>
+                </div>
                     </div>
                   </div>
                 ))
@@ -404,6 +426,16 @@ const CuidadoresPage = () => {
           </>
         )}
       </div>
+
+      {/* Modal de Detalhes */}
+      {selectedCuidador && (
+        <CuidadorDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          cuidadorId={selectedCuidador.id}
+          cuidadorName={selectedCuidador.name}
+        />
+      )}
     </div>
   );
 };

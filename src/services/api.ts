@@ -185,6 +185,52 @@ export interface CuidadorResponse {
   data_nascimento?: string;
 }
 
+// Interface para endereço do cuidador
+export interface EnderecoCuidadorResponse {
+  id_endereco_cuidador: number;
+  estado: string;
+  cidade: string;
+  endereco: string;
+  bairro: string;
+  cep: string;
+  numero: string;
+  complemento?: string;
+  referencia?: string;
+  id_cuidador: number;
+}
+
+// Interface para questionário do cuidador
+export interface QuestionarioCuidadorResponse {
+  id_questionario_cuidador: number;
+  cursos_realizados: string;
+  instituicao_ensino: string;
+  area_formacao: string;
+  tempo_experiencia: string;
+  principais_responsabilidades: string;
+  possui_certificacao: string;
+  certificacao: string;
+  qualidades_preferencias: string;
+  horario_disponivel: string;
+  disponibilidade_plantao: string;
+  qualidades_cuidador: string;
+  referencia_cuidador: string;
+  id_cuidador: number;
+}
+
+// Interface para hobbies do cuidador
+export interface HobbiesCuidadorResponse {
+  id_hobbies_cuidador: number;
+  atividades_gosta: string;
+  atividades_manuais: string;
+  gerenero_musical: string;
+  filmes_tv: string;
+  participa_eventos: string;
+  gosta_ensinar: string;
+  atividades_tecnologicas: string;
+  comentarios: string;
+  id_cuidador: number;
+}
+
 // Serviço para cuidadores
 export const cuidadorService = {
   // Listar todos os cuidadores
@@ -209,10 +255,72 @@ export const cuidadorService = {
     }
   },
 
+  // Buscar endereço do cuidador
+  buscarEndereco: async (idCuidador: number): Promise<EnderecoCuidadorResponse[]> => {
+    try {
+      const response = await api.get(`/enderecos_cuidador/${idCuidador}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar endereço do cuidador:', error);
+      throw error;
+    }
+  },
+
+  // Buscar questionário do cuidador
+  buscarQuestionario: async (idCuidador: number): Promise<QuestionarioCuidadorResponse[]> => {
+    try {
+      const response = await api.get(`/questionarios_cuidador/${idCuidador}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar questionário do cuidador:', error);
+      throw error;
+    }
+  },
+
+  // Buscar hobbies do cuidador
+  buscarHobbies: async (idCuidador: number): Promise<HobbiesCuidadorResponse[]> => {
+    try {
+      const response = await api.get(`/hobbies_cuidador/${idCuidador}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar hobbies do cuidador:', error);
+      throw error;
+    }
+  },
+
   // Cadastrar novo cuidador
   cadastrar: async (cuidadorData: CuidadorData) => {
     try {
-      const response = await api.post('/cuidadores/', cuidadorData);
+      // Mapear dados do frontend para o formato do backend
+      const dataToSend: any = {
+        nome: cuidadorData.nome,
+        cpf: cuidadorData.cpf,
+        email: cuidadorData.email,
+        telefone: cuidadorData.telefone,
+        senha: cuidadorData.senha,
+        genero: cuidadorData.genero || null,
+        data_nascimento: cuidadorData.dataNascimento 
+          ? new Date(cuidadorData.dataNascimento).toISOString().split('T')[0]
+          : null,
+        // Endereço
+        estado: cuidadorData.estado || null,
+        cidade: cuidadorData.cidade || null,
+        endereco: cuidadorData.endereco || null,
+        bairro: cuidadorData.bairro || null,
+        cep: cuidadorData.cep || null,
+        numero: cuidadorData.numero || null,
+        complemento: cuidadorData.complemento || null,
+        referencia: cuidadorData.referencia || null,
+        // Questionário
+        formacaoAcademica: cuidadorData.formacaoAcademica || null,
+        experienciaProfissional: cuidadorData.experienciaProfissional || null,
+        qualidades: cuidadorData.qualidades || null,
+        referencias: cuidadorData.referencias || null,
+        // Hobbies
+        interesses: cuidadorData.interesses || null,
+      };
+      
+      const response = await api.post('/cuidadores/', dataToSend);
       return response.data;
     } catch (error) {
       console.error('Erro ao cadastrar cuidador:', error);
@@ -237,7 +345,39 @@ export const contratanteService = {
   // Cadastrar novo contratante
   cadastrar: async (contratanteData: ContratanteData) => {
     try {
-      const response = await api.post('/contratante/', contratanteData);
+      // Mapear dados do frontend para o formato do backend
+      const dataToSend: any = {
+        nome: contratanteData.nome,
+        cpf: contratanteData.cpf,
+        email: contratanteData.email,
+        telefone: contratanteData.telefone,
+        telefone_emergencia: contratanteData.telefone_emergencia || null,
+        senha: contratanteData.senha,
+        genero: contratanteData.genero || null,
+        data_nascimento: contratanteData.data_nascimento 
+          ? (typeof contratanteData.data_nascimento === 'string' 
+              ? contratanteData.data_nascimento 
+              : new Date(contratanteData.data_nascimento).toISOString().split('T')[0])
+          : null,
+        // Endereço
+        estado: contratanteData.estado || null,
+        cidade: contratanteData.cidade || null,
+        endereco: contratanteData.endereco || null,
+        bairro: contratanteData.bairro || null,
+        cep: contratanteData.cep || null,
+        numero: contratanteData.numero || null,
+        complemento: contratanteData.complemento || null,
+        referencia: contratanteData.referencia || null,
+        // Questionário
+        questionario: contratanteData.questionario || null,
+        // Hobbies
+        hobbies: contratanteData.hobbies || null,
+        atividadesFisicas: contratanteData.atividadesFisicas || null,
+        atividadesSociais: contratanteData.atividadesSociais || null,
+        preferencias: contratanteData.preferencias || null,
+      };
+      
+      const response = await api.post('/contratante/', dataToSend);
       return response.data;
     } catch (error) {
       console.error('Erro ao cadastrar contratante:', error);
