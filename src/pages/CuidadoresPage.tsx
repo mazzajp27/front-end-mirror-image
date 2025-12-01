@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, MapPin, Clock, Phone, MessageCircle, Heart, Filter, Search, Award, Shield, Users, ChevronDown } from 'lucide-react';
+import Header from '../components/Header';
 
 interface Cuidador {
   id: string;
@@ -184,6 +185,7 @@ const CuidadoresPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
+      <Header />
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
