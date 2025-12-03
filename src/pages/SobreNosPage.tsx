@@ -6,10 +6,31 @@ const SobreNosPage: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {/* Header/Navigation */}
       <Header />
 
       <main className="max-w-5xl mx-auto px-6 py-12 bg-gradient-to-b from-white to-gray-50">
+        <button
+          onClick={() => navigate('/')}
+          className="absolute top-4 left-4 text-[#0056a4] hover:text-[#003d74] p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2"
+          aria-label="Voltar para página inicial"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-[#0056a4] mb-6">Sobre Nós</h1>
           <div className="w-24 h-1 bg-[#0056a4] mx-auto mb-8"></div>
@@ -26,10 +47,11 @@ const SobreNosPage: React.FC = () => {
           <div className="space-y-6">
             <h2 className="text-3xl font-semibold text-[#0056a4] mb-6">Nossa História</h2>
             <p className="text-xl text-gray-700 leading-relaxed">
-              O Amigo Cuidador nasceu da percepção de que muitas famílias enfrentam dificuldades para cuidar 
-              adequadamente de seus entes queridos idosos. Fundada em 2025 por um grupo de estudantes da área da tecnologia 
-              apaixonados por cuidados geriátricos, nossa empresa tem como missão proporcionar bem-estar, 
-              dignidade e qualidade de vida para idosos e tranquilidade para suas famílias.
+              O Amigo Cuidador nasceu da percepção de que muitas famílias enfrentam dificuldades 
+              para cuidar adequadamente de seus entes queridos idosos. Fundada em 2025 por um grupo 
+              de estudantes da área da tecnologia apaixonados por cuidados geriátricos, nossa empresa 
+              tem como missão proporcionar bem-estar, dignidade e qualidade de vida para idosos e 
+              tranquilidade para suas famílias.
             </p>
             <p className="text-xl text-gray-700 leading-relaxed">
               Ao longo dos anos, expandimos nossa equipe e serviços, mantendo sempre os mesmos valores: 
@@ -67,8 +89,8 @@ const SobreNosPage: React.FC = () => {
             </div>
             <p className="text-xl text-gray-700 leading-relaxed">
               Ser reconhecida como a empresa referência em cuidados domiciliares para idosos, 
-              através da excelência em serviços, comprometimento com o bem-estar e da formação contínua 
-              de profissionais altamente qualificados.
+              através da excelência em serviços, comprometimento com o bem-estar e da formação 
+              contínua de profissionais altamente qualificados.
             </p>
           </div>
         </div>
@@ -82,23 +104,28 @@ const SobreNosPage: React.FC = () => {
             </div>
             <h2 className="text-3xl font-semibold text-[#0056a4]">Nossos Valores</h2>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-semibold text-[#0056a4] mb-3">Respeito</h3>
               <p className="text-xl text-gray-700">Tratamos cada idoso com dignidade e consideração.</p>
             </div>
+
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-semibold text-[#0056a4] mb-3">Empatia</h3>
               <p className="text-xl text-gray-700">Colocamo-nos no lugar do outro para entender suas necessidades.</p>
             </div>
+
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-semibold text-[#0056a4] mb-3">Comprometimento</h3>
               <p className="text-xl text-gray-700">Dedicamo-nos totalmente ao bem-estar de nossos clientes.</p>
             </div>
+
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-semibold text-[#0056a4] mb-3">Excelência</h3>
               <p className="text-xl text-gray-700">Buscamos constantemente aprimorar nossos serviços.</p>
             </div>
+
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-semibold text-[#0056a4] mb-3">Ética</h3>
               <p className="text-xl text-gray-700">Agimos com integridade e transparência em todas as situações.</p>

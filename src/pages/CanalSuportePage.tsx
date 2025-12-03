@@ -15,6 +15,7 @@ import {
   MapPin,
   Globe
 } from 'lucide-react';
+import Header from '../components/Header';
 
 const CanalSuportePage: React.FC = () => {
   const navigate = useNavigate();
@@ -88,6 +89,7 @@ const CanalSuportePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
+      <Header />
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -103,13 +105,6 @@ const CanalSuportePage: React.FC = () => {
                 <h1 className="text-3xl font-bold text-gray-900">Canal de Suporte</h1>
                 <p className="text-gray-600 mt-1">Estamos aqui para ajudar você</p>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <img 
-                src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
-                alt="Amigo Cuidador Logo" 
-                className="h-8"
-              />
             </div>
           </div>
         </div>

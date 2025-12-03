@@ -6,30 +6,54 @@ import Header from '../components/Header';
 const AvaliacoesPage: React.FC = () => {
   const navigate = useNavigate();
   const [avaliacao, setAvaliacao] = useState('');
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!avaliacao.trim()) {
       toast.error('Por favor, escreva sua avaliação.');
       return;
     }
-    
+
     toast.success('Avaliação enviada com sucesso!');
     setAvaliacao('');
   };
-  
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Header />
 
       <main className="max-w-4xl mx-auto px-6 py-12 bg-gradient-to-b from-white to-gray-50">
+
+        <button
+          onClick={() => navigate('/')}
+          className="absolute top-4 left-4 text-[#0056a4] hover:text-[#003d74] p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2"
+          aria-label="Voltar para página inicial"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-[#0056a4] mb-6">Avaliações</h1>
-          <h2 className="text-2xl text-gray-700">O que nossos clientes dizem sobre o Amigo Cuidador</h2>
+          <h2 className="text-2xl text-gray-700">
+            O que nossos clientes dizem sobre o Amigo Cuidador
+          </h2>
         </div>
-        
+
         {/* Testimonials */}
         <div className="space-y-8">
+
           {/* Testimonial 1 */}
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -42,12 +66,12 @@ const AvaliacoesPage: React.FC = () => {
             </div>
             <p className="text-xl text-blue-700 leading-relaxed">
               "Estamos extremamente satisfeitos com o cuidado que minha mãe está recebendo. 
-              O cuidador que designaram para ela é gentil, paciente e está sempre atento às suas necessidades. 
+              O cuidador que designaram para ela é gentil, paciente e sempre atento às suas necessidades. 
               A comunicação também é excelente, tanto com a minha mãe quanto conosco, os familiares. 
               O serviço é realmente de confiança e faz toda a nossa dia a dia."
             </p>
           </div>
-          
+
           {/* Testimonial 2 */}
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -65,7 +89,7 @@ const AvaliacoesPage: React.FC = () => {
               O serviço realmente traz tranquilidade para toda a família e facilita o nosso dia a dia."
             </p>
           </div>
-          
+
           {/* Testimonial 3 */}
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -84,8 +108,8 @@ const AvaliacoesPage: React.FC = () => {
             </p>
           </div>
         </div>
-        
-        {/* Leave a review */}
+
+        {/* Review Form */}
         <div className="mt-16 bg-white p-8 rounded-xl shadow-lg">
           <h3 className="text-3xl font-semibold mb-6">Deixe aqui sua avaliação</h3>
           <form onSubmit={handleSubmit}>
@@ -105,6 +129,7 @@ const AvaliacoesPage: React.FC = () => {
             </div>
           </form>
         </div>
+
       </main>
     </div>
   );
