@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Star, MapPin, Clock, Heart, Search,
-  Shield, User, LogOut, Loader2, ChevronDown
+  Shield, Loader2, ChevronDown
 } from 'lucide-react';
 
 import { cuidadorService, CuidadorResponse } from '../services/api';
@@ -61,29 +61,6 @@ const CuidadoresPage = () => {
 
   const isFavoritado = (id: string) => favoriteIds.has(id);
 
-  // -------- AUTH --------
-  const [userName, setUserName] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('token');
-    const name = localStorage.getItem('userName');
-
-    setIsLoggedIn(!!token);
-    setUserName(name || null);
-  };
-
-  useEffect(() => {
-    checkAuth();
-    window.addEventListener('auth-change', checkAuth);
-    return () => window.removeEventListener('auth-change', checkAuth);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.clear();
-    window.dispatchEvent(new Event('auth-change'));
-    navigate('/');
-  };
 
   // -------- API --------
   const [cuidadores, setCuidadores] = useState<Cuidador[]>([]);
@@ -166,58 +143,17 @@ const CuidadoresPage = () => {
       {/* Header interno */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => navigate('/')}
-              className="text-[#0056a4] hover:text-[#004483] p-2"
-            >
-              ← Voltar
-            </button>
-
-            <h1 className="text-3xl font-bold">Cuidadores Disponíveis</h1>
-
-            <div className="flex items-center gap-4">
-              {isLoggedIn ? (
-                <>
-                  <div className="flex items-center gap-2 text-[#0056a4]">
-                    <User size={20} />
-                    <span>Olá, {userName}</span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="text-[#0056a4] hover:text-[#004483] flex gap-2 items-center"
-                  >
-                    <LogOut size={18} /> Sair
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => navigate('/tipo-cadastro')}
-                    className="bg-[#0056a4] text-white px-4 py-2 rounded-lg"
-                  >
-                    Cadastre-se
-                  </button>
-                  <button
-                    onClick={() => navigate('/login')}
-                    className="text-[#0056a4]"
-                  >
-                    Entrar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Cuidadores Disponíveis</h1>
         </div>
       </div>
 
       {/* Filtros */}
       <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row gap-4">
+        <div className="max-w-7xl mx-auto px-4 py-5 md:py-6 flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+            <Search size={20} className="absolute left-3 top-3.5 text-gray-400 pointer-events-none" />
             <input
-              className="w-full pl-10 pr-4 py-3 border rounded-lg"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:border-transparent transition-all"
               placeholder="Buscar por nome ou especialidade..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -228,22 +164,22 @@ const CuidadoresPage = () => {
             <select
               value={selectedSpecialty}
               onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg appearance-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:border-transparent transition-all bg-white cursor-pointer"
             >
               {specialties.map(s => (
                 <option key={s}>{s}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-3 text-gray-400" />
+            <ChevronDown className="absolute right-3 top-3.5 text-gray-400 pointer-events-none" size={20} />
           </div>
 
           <button
             onClick={() => setShowFavorites(!showFavorites)}
-            className={`px-4 py-3 border rounded-lg flex items-center gap-2 ${
-              showFavorites ? 'bg-red-50 text-red-600' : ''
+            className={`px-4 py-3 border rounded-lg flex items-center gap-2 transition-colors duration-200 ${
+              showFavorites ? 'bg-red-50 text-red-600 border-red-200' : 'hover:bg-gray-50'
             }`}
           >
-            <Heart size={20} className={showFavorites ? 'fill-red-500' : ''} />
+            <Heart size={20} className={showFavorites ? 'fill-red-500 text-red-500' : 'text-gray-400'} />
             Favoritos
           </button>
         </div>
@@ -268,14 +204,18 @@ const CuidadoresPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {favoritados.map(c => (
-                    <div key={c.id} className="bg-white shadow rounded-lg p-6 border border-red-200">
-                      <div className="flex justify-between">
-                        <h3 className="text-lg font-semibold">{c.name}</h3>
-                        <button onClick={() => toggleFavorito(c.id)}>
-                          <Heart className="text-red-500 fill-red-500" />
+                    <div key={c.id} className="bg-white shadow-md rounded-lg p-6 border-2 border-red-200 hover:shadow-xl transition-shadow duration-300">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-lg font-bold text-gray-900">{c.name}</h3>
+                        <button 
+                          onClick={() => toggleFavorito(c.id)}
+                          className="p-1 hover:scale-110 transition-transform"
+                          aria-label="Remover dos favoritos"
+                        >
+                          <Heart className="text-red-500 fill-red-500" size={20} />
                         </button>
                       </div>
-                      <p className="text-sm text-gray-600 mt-2">{c.description}</p>
+                      <p className="text-sm text-gray-600 mt-2 leading-relaxed">{c.description}</p>
                     </div>
                   ))}
                 </div>
@@ -285,19 +225,23 @@ const CuidadoresPage = () => {
             {/* Lista Geral */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCuidadores.map(c => (
-                <div key={c.id} className="bg-white shadow rounded-lg p-6 hover:shadow-lg">
-                  <div className="flex justify-between">
-                    <h3 className="text-lg font-bold">{c.name}</h3>
-                    <button onClick={() => toggleFavorito(c.id)}>
-                      <Heart className={isFavoritado(c.id) ? 'text-red-500 fill-red-500' : ''} />
+                <div key={c.id} className="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg font-bold text-gray-900">{c.name}</h3>
+                    <button 
+                      onClick={() => toggleFavorito(c.id)}
+                      className="p-1 hover:scale-110 transition-transform"
+                      aria-label={isFavoritado(c.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                    >
+                      <Heart className={isFavoritado(c.id) ? 'text-red-500 fill-red-500' : 'text-gray-400'} size={20} />
                     </button>
                   </div>
 
-                  <p className="text-gray-600 mt-2">{c.description}</p>
+                  <p className="text-gray-600 mt-2 text-sm leading-relaxed">{c.description}</p>
 
-                  <div className="mt-4 flex justify-between items-center">
-                    <span className="text-sm">{c.experience}</span>
-                    <span className="text-[#0056a4] font-bold">{c.price}</span>
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                    <span className="text-sm text-gray-500">{c.experience}</span>
+                    <span className="text-[#0056a4] font-bold text-lg">{c.price}</span>
                   </div>
                 </div>
               ))}

@@ -679,7 +679,7 @@ const MessagesPage: React.FC = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 -ml-2">
               <button
                 onClick={handleBackToHome}
                 className="text-[#0056a4] hover:text-[#004483] p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -699,24 +699,24 @@ const MessagesPage: React.FC = () => {
                   <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">Conversas</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Conversas</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 {isConnected ? (
-                  <Wifi size={20} className="text-green-500" title="Conectado" />
+                  <Wifi size={28} className="text-green-500" title="Conectado" />
                 ) : isConnecting ? (
-                  <div className="w-5 h-5 border-2 border-[#0056a4] border-t-transparent rounded-full animate-spin" title="Conectando..." />
+                  <div className="w-7 h-7 border-2 border-[#0056a4] border-t-transparent rounded-full animate-spin" title="Conectando..." />
                 ) : (
-                  <WifiOff size={20} className="text-red-500" title="Desconectado" />
+                  <WifiOff size={28} className="text-red-500" title="Desconectado" />
                 )}
               </div>
               <img 
                 src="/lovable-uploads/ae6d71a7-8de9-40f0-a34b-848a22c94d66.png" 
                 alt="Amigo Cuidador Logo" 
-                className="h-8"
+                className="h-12 md:h-16"
               />
-              <span className="text-[#0056a4] font-semibold">AMIGO CUIDADOR</span>
+              <span className="text-[#0056a4] font-semibold text-lg md:text-xl">AMIGO CUIDADOR</span>
             </div>
           </div>
         </div>

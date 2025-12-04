@@ -58,10 +58,10 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white border-b border-gray-100" role="banner">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-3 sm:py-4 md:py-5">
+        <div className="flex items-center justify-between py-3 sm:py-4 md:py-5 gap-4 md:gap-6 lg:gap-8">
 
           {/* LOGO */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0 mr-4 md:mr-6 lg:mr-8">
             <button
               onClick={() => navigate('/')}
               className="hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-[#0056a4] focus:ring-offset-2 rounded-lg"
@@ -80,7 +80,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* MENU */}
-          <nav className="flex items-center gap-3" role="navigation" aria-label="Menu principal">
+          <nav className="flex items-center gap-3 ml-auto" role="navigation" aria-label="Menu principal">
 
             <a
               href="/"
@@ -98,7 +98,7 @@ const Header: React.FC = () => {
 
             <a
               href="/sobre-nos"
-              className={`text-[#0056a4] hover:text-[#003d74] text-sm md:text-lg px-3 py-2 rounded-md ${location.pathname === '/sobre-nos' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
+              className={`text-[#0056a4] hover:text-[#003d74] text-sm md:text-lg px-3 py-2 rounded-md whitespace-nowrap ${location.pathname === '/sobre-nos' ? 'font-bold border-b-2 border-[#0056a4]' : ''}`}
             >
               Sobre nós
             </a>
@@ -147,7 +147,7 @@ const Header: React.FC = () => {
               <>
                 <button
                   onClick={() => navigate('/tipo-cadastro')}
-                  className="bg-[#0056a4] text-white px-4 md:px-6 py-2 rounded-lg hover:bg-[#004483] text-sm md:text-base"
+                  className="bg-[#0056a4] text-white px-4 md:px-6 py-2 rounded-lg hover:bg-[#004483] text-sm md:text-base whitespace-nowrap"
                 >
                   Cadastre-se
                 </button>
