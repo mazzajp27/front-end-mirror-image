@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { MessageCircle, Search, MoreVertical, User, Send, Wifi, WifiOff, Mail, Phone, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { socketService, SocketMessage } from '../services/socket';
+import { mensagemService, ConversaComUltimaMensagem, MensagemResponse } from '../services/api';
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,9 @@ interface Conversation {
   lastMessageTimestamp: number; // Timestamp numérico para ordenação
   unread?: number;
   messages: Message[];
+  id_conversa?: number; // ID real da conversa no backend
+  id_contratante?: number;
+  id_cuidador?: number;
 }
 
 const MessagesPage: React.FC = () => {
@@ -40,27 +44,29 @@ const MessagesPage: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [currentUserId] = useState(() => {
-    // Em produção, isso viria do contexto de autenticação
-    // Por enquanto, usamos um ID temporário baseado no localStorage
     try {
       const storedUserId = localStorage.getItem('userId');
       if (storedUserId) return storedUserId;
-      const newUserId = `user-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-      localStorage.setItem('userId', newUserId);
-      return newUserId;
+      return null;
     } catch (error) {
-      // Se localStorage não estiver disponível, usar ID temporário
-      return `user-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+      return null;
     }
   });
   const [currentUserName] = useState(() => {
-    // Em produção, isso viria do contexto de autenticação
     try {
       return localStorage.getItem('userName') || 'Usuário';
     } catch (error) {
       return 'Usuário';
     }
   });
+  const [currentUserType] = useState(() => {
+    try {
+      return localStorage.getItem('userType') || null;
+    } catch (error) {
+      return null;
+    }
+  });
+  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const currentRoomRef = useRef<string | null>(null);
   
   // Função auxiliar para obter timestamp numérico de uma string de hora
@@ -234,21 +240,63 @@ const MessagesPage: React.FC = () => {
     }
   };
 
-  // Inicializar conversas do localStorage ou usar as padrão
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    return loadConversationsFromStorage();
-  });
+  // Inicializar conversas vazias - serão carregadas do backend
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Salvar conversas no localStorage sempre que houver mudanças
+  // Mapear conversas do backend para o formato local
+  const mapConversaFromBackend = (conv: ConversaComUltimaMensagem, userType: string): Conversation => {
+    const isContratante = userType === 'contratante';
+    const nomeOutro = isContratante ? conv.nome_cuidador : conv.nome_contratante;
+    const ultimaMsg = conv.ultima_mensagem;
+    
+    return {
+      id: conv.id_conversa.toString(), // Usar id_conversa como ID
+      name: nomeOutro,
+      role: isContratante ? 'Cuidador' : 'Familia',
+      lastMessage: ultimaMsg?.texto || 'Nenhuma mensagem ainda',
+      timestamp: ultimaMsg ? formatTimestamp(ultimaMsg.created_at) : formatTimestamp(conv.created_at),
+      lastMessageTimestamp: ultimaMsg ? new Date(ultimaMsg.created_at).getTime() : new Date(conv.created_at).getTime(),
+      unread: conv.mensagens_nao_lidas || 0,
+      messages: [], // Será carregado quando a conversa for selecionada
+      id_conversa: conv.id_conversa, // Guardar o ID real da conversa
+      id_contratante: conv.id_contratante,
+      id_cuidador: conv.id_cuidador,
+    };
+  };
+
+  // Carregar conversas do backend
   useEffect(() => {
-    // Não salvar na primeira renderização (já foi carregado do storage)
-    // Apenas salvar quando houver mudanças reais
-    if (conversations.length > 0) {
-      saveConversationsToStorage(conversations);
-    }
-  }, [conversations]);
+    const loadConversationsFromBackend = async () => {
+      if (!currentUserId || !currentUserType) {
+        setIsLoadingConversations(false);
+        return;
+      }
+
+      try {
+        setIsLoadingConversations(true);
+        let conversasBackend: ConversaComUltimaMensagem[] = [];
+
+        if (currentUserType === 'contratante') {
+          conversasBackend = await mensagemService.buscarConversasContratante(parseInt(currentUserId));
+        } else if (currentUserType === 'cuidador') {
+          conversasBackend = await mensagemService.buscarConversasCuidador(parseInt(currentUserId));
+        }
+
+        // Converter para o formato local
+        const conversasLocais = conversasBackend.map(conv => mapConversaFromBackend(conv, currentUserType));
+        setConversations(conversasLocais);
+      } catch (error) {
+        console.error('Erro ao carregar conversas:', error);
+        toast.error('Erro ao carregar conversas');
+      } finally {
+        setIsLoadingConversations(false);
+      }
+    };
+
+    loadConversationsFromBackend();
+  }, [currentUserId, currentUserType]);
 
   // Formatar timestamp
   const formatTimestamp = useCallback((timestamp: string): string => {
@@ -451,55 +499,51 @@ const MessagesPage: React.FC = () => {
     const cuidadorName = urlParams.get('cuidadorName');
     const cuidadorRole = urlParams.get('cuidadorRole');
 
-    if (cuidadorId && cuidadorName && cuidadorRole) {
-      // Check if conversation already exists
-      setConversations(prev => {
-        const existingConversation = prev.find(conv => conv.id === cuidadorId);
-        
-        if (!existingConversation) {
-          // Create new conversation
-          const now = new Date();
-          const timestampString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-          const timestampNumber = now.getTime();
+    if (cuidadorId && cuidadorName && cuidadorRole && currentUserId && currentUserType === 'contratante') {
+      const criarConversa = async () => {
+        try {
+          // Criar ou buscar conversa no backend
+          const conversaBackend = await mensagemService.criarOuBuscarConversa(
+            parseInt(currentUserId),
+            parseInt(cuidadorId)
+          );
+
+          // Verificar se a conversa já existe no estado local
+          const existingConversation = conversations.find(conv => conv.id_conversa === conversaBackend.id_conversa);
           
-          const newConversation: Conversation = {
-            id: cuidadorId,
-            name: cuidadorName,
-            role: cuidadorRole as 'Cuidador' | 'Familia' | 'Paciente',
-            lastMessage: 'Conversa iniciada',
-            timestamp: timestampString,
-            lastMessageTimestamp: timestampNumber,
-            unread: 0,
-            messages: [
-              {
-                id: `${cuidadorId}-welcome`,
-                text: `Olá! Iniciamos uma conversa. Como posso ajudá-lo(a)?`,
-                sender: 'other',
-                timestamp: timestampString,
-                isRead: false
-              }
-            ]
-          };
+          if (!existingConversation) {
+            // Buscar informações do cuidador para criar a conversa local
+            const newConversation: Conversation = {
+              id: conversaBackend.id_conversa.toString(),
+              name: cuidadorName,
+              role: cuidadorRole as 'Cuidador' | 'Familia' | 'Paciente',
+              lastMessage: 'Conversa iniciada',
+              timestamp: formatTimestamp(conversaBackend.created_at),
+              lastMessageTimestamp: new Date(conversaBackend.created_at).getTime(),
+              unread: 0,
+              messages: [],
+              id_conversa: conversaBackend.id_conversa,
+              id_contratante: conversaBackend.id_contratante,
+              id_cuidador: conversaBackend.id_cuidador,
+            };
 
-          // Use setTimeout to ensure state update happens after render
-          setTimeout(() => {
-            setSelectedConversation(cuidadorId);
-          }, 0);
-
-          return [newConversation, ...prev];
-        } else {
-          // Conversation exists, select it
-          setTimeout(() => {
-            setSelectedConversation(cuidadorId);
-          }, 0);
-          return prev;
+            setConversations(prev => [newConversation, ...prev]);
+            setSelectedConversation(conversaBackend.id_conversa.toString());
+          } else {
+            // Conversa existe, apenas selecionar
+            setSelectedConversation(existingConversation.id);
+          }
+        } catch (error) {
+          console.error('Erro ao criar conversa:', error);
+          toast.error('Erro ao iniciar conversa');
         }
-      });
+      };
 
+      criarConversa();
       // Clean URL parameters
       navigate('/mensagens', { replace: true });
     }
-  }, [location.search, navigate]);
+  }, [location.search, navigate, currentUserId, currentUserType, conversations]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -525,72 +569,93 @@ const MessagesPage: React.FC = () => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedConversation) return;
+    if (!newMessage.trim() || !selectedConversation || !currentUserId || !currentUserType) return;
 
-    const messageId = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+    const conversaAtual = conversations.find(conv => conv.id === selectedConversation);
+    if (!conversaAtual || !conversaAtual.id_conversa) {
+      toast.error('Erro: conversa não encontrada');
+      return;
+    }
+
     const now = new Date();
     const timestamp = now.toISOString();
 
-    // Criar mensagem local
-    const newMsg: Message = {
-      id: messageId,
-      text: newMessage.trim(),
-      sender: 'me',
-      timestamp: formatTimestamp(timestamp),
-      isRead: true
-    };
-
-    // Adicionar mensagem localmente imediatamente
-    const messageTimestamp = now.getTime();
-    setConversations(prev => {
-      // Criar novo array para garantir que o React detecte a mudança
-      const updated = prev.map(conv => 
-        conv.id === selectedConversation 
-          ? {
-              ...conv,
-              messages: [...conv.messages, newMsg],
-              lastMessage: newMessage.trim(),
-              timestamp: formatTimestamp(timestamp),
-              lastMessageTimestamp: messageTimestamp,
-              unread: 0
-            }
-          : conv
-      );
-      // Ordenar após atualizar para garantir que a conversa atualizada suba
-      return updated.sort((a, b) => {
-        const aUnread = a.unread || 0;
-        const bUnread = b.unread || 0;
-        if (aUnread > 0 && bUnread === 0) return -1;
-        if (aUnread === 0 && bUnread > 0) return 1;
-        return b.lastMessageTimestamp - a.lastMessageTimestamp;
+    // Criar mensagem no backend
+    try {
+      const mensagemBackend = await mensagemService.criarMensagem({
+        id_conversa: conversaAtual.id_conversa,
+        id_remetente: parseInt(currentUserId),
+        tipo_remetente: currentUserType,
+        texto: newMessage.trim()
       });
-    });
 
-    setNewMessage('');
+      // Criar mensagem local a partir da resposta do backend
+      const newMsg: Message = {
+        id: mensagemBackend.id_mensagem.toString(),
+        text: mensagemBackend.texto,
+        sender: 'me',
+        timestamp: formatTimestamp(mensagemBackend.created_at),
+        isRead: true
+      };
 
-    // Tentar enviar via Socket.io se estiver conectado
-    if (isConnected && socketService && socketService.isConnected()) {
-      try {
-        socketService.sendMessage(
-          selectedConversation, // roomId = ID da contratação
-          {
-            id: messageId,
-            text: newMessage.trim(),
-            sender: currentUserId,
-            timestamp
-          },
-          currentUserId,
-          currentUserName
+      // Adicionar mensagem localmente
+      const messageTimestamp = new Date(mensagemBackend.created_at).getTime();
+      setConversations(prev => {
+        const updated = prev.map(conv => 
+          conv.id === selectedConversation 
+            ? {
+                ...conv,
+                messages: [...conv.messages, newMsg],
+                lastMessage: newMessage.trim(),
+                timestamp: formatTimestamp(mensagemBackend.created_at),
+                lastMessageTimestamp: messageTimestamp,
+                unread: 0
+              }
+            : conv
         );
-      } catch (error) {
-        console.warn('Erro ao enviar mensagem via Socket.io (mensagem salva localmente):', error);
-        // Mensagem já foi adicionada localmente, então não precisa fazer nada
+        return updated.sort((a, b) => {
+          const aUnread = a.unread || 0;
+          const bUnread = b.unread || 0;
+          if (aUnread > 0 && bUnread === 0) return -1;
+          if (aUnread === 0 && bUnread > 0) return 1;
+          return b.lastMessageTimestamp - a.lastMessageTimestamp;
+        });
+      });
+
+      setNewMessage('');
+
+      // Tentar enviar via Socket.io se estiver conectado (para tempo real)
+      if (isConnected && socketService && socketService.isConnected() && conversaAtual.id_conversa) {
+        try {
+          socketService.sendMessage(
+            conversaAtual.id_conversa.toString(), // roomId = ID da conversa
+            {
+              id: mensagemBackend.id_mensagem.toString(),
+              text: mensagemBackend.texto,
+              sender: currentUserId,
+              timestamp: mensagemBackend.created_at
+            },
+            currentUserId,
+            currentUserName
+          );
+        } catch (error) {
+          console.warn('Erro ao enviar mensagem via Socket.io:', error);
+          // Mensagem já foi salva no backend, então está ok
+        }
       }
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      toast.error('Erro ao enviar mensagem. Tente novamente.');
     }
-    // Se não estiver conectado, a mensagem já foi salva localmente acima
   };
 
   const handleConversationSelect = async (conversationId: string) => {
+    const conversaAtual = conversations.find(conv => conv.id === conversationId);
+    if (!conversaAtual || !conversaAtual.id_conversa) {
+      toast.error('Erro: conversa não encontrada');
+      return;
+    }
+
     // Sair da sala anterior se houver
     if (currentRoomRef.current && currentRoomRef.current !== conversationId && socketService.isConnected()) {
       try {
@@ -602,24 +667,50 @@ const MessagesPage: React.FC = () => {
 
     setSelectedConversation(conversationId);
     currentRoomRef.current = conversationId;
-    
-    // Marcar mensagens como lidas
-    setConversations(prev => 
-      prev.map(conv => 
-        conv.id === conversationId 
-          ? {
-              ...conv,
-              unread: 0,
-              messages: conv.messages.map(msg => ({ ...msg, isRead: true }))
-            }
-          : conv
-      )
-    );
 
-    // Entrar na nova sala (roomId = ID da contratação/conversa) se estiver conectado
-    if (isConnected && socketService.isConnected()) {
+    // Carregar mensagens do backend
+    try {
+      const mensagensBackend = await mensagemService.buscarMensagens(conversaAtual.id_conversa);
+      
+      // Converter mensagens do backend para o formato local
+      const mensagensLocais: Message[] = mensagensBackend.map(msg => ({
+        id: msg.id_mensagem.toString(),
+        text: msg.texto,
+        sender: (msg.tipo_remetente === currentUserType) ? 'me' : 'other',
+        timestamp: formatTimestamp(msg.created_at),
+        isRead: msg.lida
+      }));
+
+      // Atualizar conversa com mensagens carregadas
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === conversationId 
+            ? {
+                ...conv,
+                messages: mensagensLocais,
+                unread: 0
+              }
+            : conv
+        )
+      );
+
+      // Marcar mensagens como lidas no backend
+      if (currentUserType) {
+        try {
+          await mensagemService.marcarComoLidas(conversaAtual.id_conversa, currentUserType);
+        } catch (error) {
+          console.warn('Erro ao marcar mensagens como lidas:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar mensagens:', error);
+      toast.error('Erro ao carregar mensagens');
+    }
+
+    // Entrar na nova sala (roomId = ID da conversa) se estiver conectado
+    if (isConnected && socketService.isConnected() && conversaAtual.id_conversa) {
       try {
-        await socketService.joinRoom(conversationId, currentUserId, currentUserName);
+        await socketService.joinRoom(conversaAtual.id_conversa.toString(), currentUserId, currentUserName);
       } catch (error) {
         console.warn('Erro ao entrar na sala (continuando em modo local):', error);
         // Não bloquear - permitir funcionamento local

@@ -460,4 +460,117 @@ export const authService = {
   },
 };
 
+// Interfaces para mensagens
+export interface MensagemResponse {
+  id_mensagem: number;
+  id_conversa: number;
+  id_remetente: number;
+  tipo_remetente: string;
+  texto: string;
+  lida: boolean;
+  created_at: string;
+}
+
+export interface ConversaResponse {
+  id_conversa: number;
+  id_contratante: number;
+  id_cuidador: number;
+  created_at: string;
+  mensagens: MensagemResponse[];
+}
+
+export interface ConversaComUltimaMensagem {
+  id_conversa: number;
+  id_contratante: number;
+  id_cuidador: number;
+  nome_contratante: string;
+  nome_cuidador: string;
+  created_at: string;
+  ultima_mensagem: MensagemResponse | null;
+  total_mensagens: number;
+  mensagens_nao_lidas: number;
+}
+
+export interface MensagemCreate {
+  id_conversa: number;
+  id_remetente: number;
+  tipo_remetente: string;
+  texto: string;
+}
+
+// Serviço para mensagens
+export const mensagemService = {
+  // Criar ou buscar conversa
+  criarOuBuscarConversa: async (idContratante: number, idCuidador: number): Promise<ConversaResponse> => {
+    try {
+      // Primeiro tenta buscar se já existe
+      const response = await api.get(`/conversas/${idContratante}/${idCuidador}`);
+      return response.data;
+    } catch (error: any) {
+      // Se não encontrar, criar nova conversa
+      if (error.response?.status === 404) {
+        const response = await api.post(`/conversas/?id_contratante=${idContratante}&id_cuidador=${idCuidador}`);
+        return response.data;
+      }
+      throw error;
+    }
+  },
+
+  // Buscar conversas do contratante
+  buscarConversasContratante: async (idContratante: number): Promise<ConversaComUltimaMensagem[]> => {
+    try {
+      const response = await api.get(`/conversas/contratante/${idContratante}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar conversas do contratante:', error);
+      throw error;
+    }
+  },
+
+  // Buscar conversas do cuidador
+  buscarConversasCuidador: async (idCuidador: number): Promise<ConversaComUltimaMensagem[]> => {
+    try {
+      const response = await api.get(`/conversas/cuidador/${idCuidador}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar conversas do cuidador:', error);
+      throw error;
+    }
+  },
+
+  // Buscar mensagens de uma conversa
+  buscarMensagens: async (idConversa: number): Promise<MensagemResponse[]> => {
+    try {
+      const response = await api.get(`/mensagens/conversa/${idConversa}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar mensagens:', error);
+      throw error;
+    }
+  },
+
+  // Criar mensagem
+  criarMensagem: async (mensagem: MensagemCreate): Promise<MensagemResponse> => {
+    try {
+      const response = await api.post(`/mensagens/`, mensagem);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar mensagem:', error);
+      throw error;
+    }
+  },
+
+  // Marcar mensagens como lidas
+  marcarComoLidas: async (idConversa: number, tipoUsuario: string): Promise<void> => {
+    try {
+      await api.put(`/mensagens/marcar-lidas/${idConversa}`, null, {
+        params: { tipo_usuario: tipoUsuario }
+      });
+    } catch (error) {
+      console.error('Erro ao marcar mensagens como lidas:', error);
+      throw error;
+    }
+  },
+};
+
 export default api;

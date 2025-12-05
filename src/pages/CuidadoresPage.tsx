@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Star, MapPin, Clock, Heart, Search,
-  Shield, Loader2, ChevronDown
+  Shield, Loader2, ChevronDown, MessageCircle
 } from 'lucide-react';
 
 import { cuidadorService, CuidadorResponse } from '../services/api';
@@ -157,6 +157,20 @@ const CuidadoresPage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCuidador(null);
+  };
+
+  // Função para abrir o chat com um cuidador
+  const handleOpenChat = (cuidador: Cuidador) => {
+    const userId = localStorage.getItem('userId');
+    const userType = localStorage.getItem('userType');
+    
+    if (!userId || userType !== 'contratante') {
+      toast.error('Você precisa estar logado como contratante para iniciar uma conversa');
+      return;
+    }
+
+    // Navegar para a página de mensagens com os parâmetros do cuidador
+    navigate(`/mensagens?cuidadorId=${cuidador.id}&cuidadorName=${encodeURIComponent(cuidador.name)}&cuidadorRole=Cuidador`);
   };
 
 
@@ -315,12 +329,21 @@ const CuidadoresPage = () => {
                       </div>
                       <p className="text-sm text-gray-600 mt-2 leading-relaxed">{c.description}</p>
                       <div className="mt-4 pt-4 border-t border-gray-100">
-                        <button
-                          onClick={() => handleOpenModal(c)}
-                          className="w-full bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
-                        >
-                          Ver mais detalhes
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleOpenModal(c)}
+                            className="flex-1 bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
+                          >
+                            Ver mais detalhes
+                          </button>
+                          <button
+                            onClick={() => handleOpenChat(c)}
+                            className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-1"
+                            title="Iniciar conversa"
+                          >
+                            <MessageCircle size={16} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -350,12 +373,21 @@ const CuidadoresPage = () => {
                       <span className="text-sm text-gray-500">{c.experience}</span>
                       <span className="text-[#0056a4] font-bold text-lg">{c.price}</span>
                     </div>
-                    <button
-                      onClick={() => handleOpenModal(c)}
-                      className="w-full bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
-                    >
-                      Ver mais detalhes
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleOpenModal(c)}
+                        className="flex-1 bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
+                      >
+                        Ver mais detalhes
+                      </button>
+                      <button
+                        onClick={() => handleOpenChat(c)}
+                        className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-1"
+                        title="Iniciar conversa"
+                      >
+                        <MessageCircle size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
