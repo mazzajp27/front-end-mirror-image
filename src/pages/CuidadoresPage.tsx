@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Star, MapPin, Clock, Heart, Search,
   Shield, Loader2, ChevronDown
@@ -32,24 +32,80 @@ interface Cuidador {
 
 const CuidadoresPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
 
-  // -------- FAVORITOS (localStorage) --------
+  // -------- FAVORITOS (localStorage associado ao usuário) --------
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    const saved = localStorage.getItem('cuidadoresFavoritos');
-    if (saved) {
-      setFavoriteIds(new Set(JSON.parse(saved)));
+  // Função para obter a chave do localStorage baseada no userId
+  const getFavoritesKey = () => {
+    const userId = localStorage.getItem('userId');
+    return userId ? `cuidadoresFavoritos_${userId}` : null;
+  };
+
+  // Função para carregar favoritos do usuário atual
+  const loadFavorites = useCallback(() => {
+    const favoritesKey = getFavoritesKey();
+    if (favoritesKey) {
+      const saved = localStorage.getItem(favoritesKey);
+      if (saved) {
+        setFavoriteIds(new Set(JSON.parse(saved)));
+      } else {
+        setFavoriteIds(new Set());
+      }
+    } else {
+      // Se não há usuário logado, limpar favoritos
+      setFavoriteIds(new Set());
     }
   }, []);
 
+  // Carregar favoritos quando o componente monta ou quando a rota muda
   useEffect(() => {
-    localStorage.setItem('cuidadoresFavoritos', JSON.stringify([...favoriteIds]));
+    // Pequeno delay para garantir que o localStorage foi atualizado após o login
+    const timer = setTimeout(() => {
+      loadFavorites();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [location.pathname, loadFavorites]);
+
+  // Salvar favoritos no localStorage quando mudarem (apenas se houver usuário logado)
+  useEffect(() => {
+    const favoritesKey = getFavoritesKey();
+    if (favoritesKey && favoriteIds.size > 0) {
+      localStorage.setItem(favoritesKey, JSON.stringify([...favoriteIds]));
+    }
   }, [favoriteIds]);
+
+  // Recarregar favoritos quando o usuário fizer login/logout ou mudar de usuário
+  useEffect(() => {
+    const handleAuthChange = () => {
+      // Pequeno delay para garantir que o localStorage foi atualizado
+      setTimeout(() => {
+        loadFavorites();
+      }, 100);
+    };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      // Se o userId mudou, recarregar favoritos
+      if (e.key === 'userId' || e.key === 'token') {
+        setTimeout(() => {
+          loadFavorites();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('auth-change', handleAuthChange);
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('auth-change', handleAuthChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [loadFavorites]);
 
   const toggleFavorito = (id: string) => {
     setFavoriteIds(prev => {

@@ -44,6 +44,7 @@ const Header: React.FC = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
+    // Não remover os favoritos - eles devem persistir para quando o usuário fizer login novamente
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
     localStorage.removeItem('userId');
