@@ -38,8 +38,13 @@ const CuidadoresPage = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
 
+  // Estado do modal de detalhes
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCuidador, setSelectedCuidador] = useState<{ id: number; name: string } | null>(null);
+
   // -------- FAVORITOS (localStorage associado ao usuário) --------
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [isLoadingFavorites, setIsLoadingFavorites] = useState(true);
 
   // Função para obter a chave do localStorage baseada no userId
   const getFavoritesKey = () => {
@@ -53,7 +58,13 @@ const CuidadoresPage = () => {
     if (favoritesKey) {
       const saved = localStorage.getItem(favoritesKey);
       if (saved) {
-        setFavoriteIds(new Set(JSON.parse(saved)));
+        try {
+          const parsed = JSON.parse(saved);
+          setFavoriteIds(new Set(parsed));
+        } catch (e) {
+          console.error('Erro ao carregar favoritos:', e);
+          setFavoriteIds(new Set());
+        }
       } else {
         setFavoriteIds(new Set());
       }
@@ -61,10 +72,12 @@ const CuidadoresPage = () => {
       // Se não há usuário logado, limpar favoritos
       setFavoriteIds(new Set());
     }
+    setIsLoadingFavorites(false);
   }, []);
 
   // Carregar favoritos quando o componente monta ou quando a rota muda
   useEffect(() => {
+    setIsLoadingFavorites(true);
     // Pequeno delay para garantir que o localStorage foi atualizado após o login
     const timer = setTimeout(() => {
       loadFavorites();
@@ -72,13 +85,19 @@ const CuidadoresPage = () => {
     return () => clearTimeout(timer);
   }, [location.pathname, loadFavorites]);
 
-  // Salvar favoritos no localStorage quando mudarem (apenas se houver usuário logado)
+  // Salvar favoritos no localStorage quando mudarem (apenas se houver usuário logado e não estiver carregando)
   useEffect(() => {
+    // Não salvar durante o carregamento inicial para evitar sobrescrever
+    if (isLoadingFavorites) {
+      return;
+    }
+
     const favoritesKey = getFavoritesKey();
-    if (favoritesKey && favoriteIds.size > 0) {
+    if (favoritesKey) {
+      // Sempre salvar, mesmo se estiver vazio, para garantir que desfavoritar seja persistido
       localStorage.setItem(favoritesKey, JSON.stringify([...favoriteIds]));
     }
-  }, [favoriteIds]);
+  }, [favoriteIds, isLoadingFavorites]);
 
   // Recarregar favoritos quando o usuário fizer login/logout ou mudar de usuário
   useEffect(() => {
@@ -110,12 +129,35 @@ const CuidadoresPage = () => {
   const toggleFavorito = (id: string) => {
     setFavoriteIds(prev => {
       const copy = new Set(prev);
-      copy.has(id) ? copy.delete(id) : copy.add(id);
+      if (copy.has(id)) {
+        copy.delete(id);
+      } else {
+        copy.add(id);
+      }
+      
+      // Salvar imediatamente no localStorage
+      const favoritesKey = getFavoritesKey();
+      if (favoritesKey) {
+        localStorage.setItem(favoritesKey, JSON.stringify([...copy]));
+      }
+      
       return copy;
     });
   };
 
   const isFavoritado = (id: string) => favoriteIds.has(id);
+
+  // Função para abrir o modal de detalhes
+  const handleOpenModal = (cuidador: Cuidador) => {
+    setSelectedCuidador({ id: parseInt(cuidador.id), name: cuidador.name });
+    setIsModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCuidador(null);
+  };
 
 
   // -------- API --------
@@ -272,6 +314,14 @@ const CuidadoresPage = () => {
                         </button>
                       </div>
                       <p className="text-sm text-gray-600 mt-2 leading-relaxed">{c.description}</p>
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <button
+                          onClick={() => handleOpenModal(c)}
+                          className="w-full bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
+                        >
+                          Ver mais detalhes
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -295,9 +345,17 @@ const CuidadoresPage = () => {
 
                   <p className="text-gray-600 mt-2 text-sm leading-relaxed">{c.description}</p>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-                    <span className="text-sm text-gray-500">{c.experience}</span>
-                    <span className="text-[#0056a4] font-bold text-lg">{c.price}</span>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-sm text-gray-500">{c.experience}</span>
+                      <span className="text-[#0056a4] font-bold text-lg">{c.price}</span>
+                    </div>
+                    <button
+                      onClick={() => handleOpenModal(c)}
+                      className="w-full bg-[#0056a4] text-white py-2 px-4 rounded-lg hover:bg-[#004483] transition-colors duration-200 text-sm font-medium"
+                    >
+                      Ver mais detalhes
+                    </button>
                   </div>
                 </div>
               ))}
@@ -306,13 +364,15 @@ const CuidadoresPage = () => {
         )}
       </div>
 
-      {/* Modal */}
-      <CuidadorDetailsModal
-        isOpen={false}
-        onClose={() => {}}
-        cuidadorId={0}
-        cuidadorName=""
-      />
+      {/* Modal de Detalhes */}
+      {selectedCuidador && (
+        <CuidadorDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          cuidadorId={selectedCuidador.id}
+          cuidadorName={selectedCuidador.name}
+        />
+      )}
     </div>
   );
 };

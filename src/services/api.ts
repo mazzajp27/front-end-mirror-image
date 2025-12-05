@@ -291,6 +291,10 @@ export const cuidadorService = {
   // Cadastrar novo cuidador
   cadastrar: async (cuidadorData: CuidadorData) => {
     try {
+      // Debug: verificar o que está sendo enviado
+      console.log('DEBUG Frontend - cuidadorData completo:', JSON.stringify(cuidadorData, null, 2));
+      console.log('DEBUG Frontend - interesses:', cuidadorData.interesses);
+      
       // Mapear dados do frontend para o formato do backend
       const dataToSend: any = {
         nome: cuidadorData.nome,
@@ -316,9 +320,12 @@ export const cuidadorService = {
         experienciaProfissional: cuidadorData.experienciaProfissional || null,
         qualidades: cuidadorData.qualidades || null,
         referencias: cuidadorData.referencias || null,
-        // Hobbies
-        interesses: cuidadorData.interesses || null,
+        // Hobbies - garantir que seja enviado mesmo se for undefined
+        interesses: cuidadorData.interesses !== undefined ? cuidadorData.interesses : null,
       };
+      
+      console.log('DEBUG Frontend - dataToSend.interesses:', dataToSend.interesses);
+      console.log('DEBUG Frontend - dataToSend completo:', JSON.stringify(dataToSend, null, 2));
       
       const response = await api.post('/cuidadores/', dataToSend);
       return response.data;
@@ -345,6 +352,13 @@ export const contratanteService = {
   // Cadastrar novo contratante
   cadastrar: async (contratanteData: ContratanteData) => {
     try {
+      // Debug: verificar o que está sendo enviado
+      console.log('DEBUG Frontend - contratanteData completo:', JSON.stringify(contratanteData, null, 2));
+      console.log('DEBUG Frontend - hobbies:', contratanteData.hobbies);
+      console.log('DEBUG Frontend - atividadesFisicas:', contratanteData.atividadesFisicas);
+      console.log('DEBUG Frontend - atividadesSociais:', contratanteData.atividadesSociais);
+      console.log('DEBUG Frontend - preferencias:', contratanteData.preferencias);
+      
       // Mapear dados do frontend para o formato do backend
       const dataToSend: any = {
         nome: contratanteData.nome,
@@ -370,12 +384,15 @@ export const contratanteService = {
         referencia: contratanteData.referencia || null,
         // Questionário
         questionario: contratanteData.questionario || null,
-        // Hobbies
-        hobbies: contratanteData.hobbies || null,
-        atividadesFisicas: contratanteData.atividadesFisicas || null,
-        atividadesSociais: contratanteData.atividadesSociais || null,
-        preferencias: contratanteData.preferencias || null,
+        // Hobbies - garantir que sejam enviados mesmo se forem undefined
+        hobbies: contratanteData.hobbies !== undefined ? contratanteData.hobbies : null,
+        atividadesFisicas: contratanteData.atividadesFisicas !== undefined ? contratanteData.atividadesFisicas : null,
+        atividadesSociais: contratanteData.atividadesSociais !== undefined ? contratanteData.atividadesSociais : null,
+        preferencias: contratanteData.preferencias !== undefined ? contratanteData.preferencias : null,
       };
+      
+      console.log('DEBUG Frontend - dataToSend.hobbies:', dataToSend.hobbies);
+      console.log('DEBUG Frontend - dataToSend completo:', JSON.stringify(dataToSend, null, 2));
       
       const response = await api.post('/contratante/', dataToSend);
       return response.data;

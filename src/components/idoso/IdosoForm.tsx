@@ -51,17 +51,34 @@ const IdosoForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (hobbiesData?: { hobbies?: string[], atividadesFisicas?: any, atividadesSociais?: any, preferencias?: any }) => {
     try {
       setIsSubmitting(true);
       
+      // Se hobbiesData foi passado, atualizar formData antes de enviar
+      const dataToSubmit = hobbiesData 
+        ? { 
+            ...formData, 
+            hobbies: hobbiesData.hobbies,
+            atividadesFisicas: hobbiesData.atividadesFisicas,
+            atividadesSociais: hobbiesData.atividadesSociais,
+            preferencias: hobbiesData.preferencias
+          }
+        : formData;
+      
       // Formatar a data antes de enviar (se existir)
       const dataToSend = {
-        ...formData,
-        data_nascimento: formData.data_nascimento 
-          ? new Date(formData.data_nascimento).toISOString().split('T')[0]
+        ...dataToSubmit,
+        data_nascimento: dataToSubmit.data_nascimento 
+          ? new Date(dataToSubmit.data_nascimento).toISOString().split('T')[0]
           : undefined
       };
+
+      console.log('DEBUG - formData antes de enviar:', JSON.stringify(dataToSend, null, 2));
+      console.log('DEBUG - formData.hobbies:', dataToSend.hobbies);
+      console.log('DEBUG - formData.atividadesFisicas:', dataToSend.atividadesFisicas);
+      console.log('DEBUG - formData.atividadesSociais:', dataToSend.atividadesSociais);
+      console.log('DEBUG - formData.preferencias:', dataToSend.preferencias);
 
       await contratanteService.cadastrar(dataToSend);
       toast.success("Cadastro realizado com sucesso!");
@@ -109,7 +126,7 @@ const IdosoForm: React.FC = () => {
             data={formData}
             updateData={updateFormData}
             onPrevious={handlePrevious}
-            onSubmit={handleSubmit}
+            onSubmit={(hobbiesData) => handleSubmit(hobbiesData)}
             isSubmitting={isSubmitting}
           />
         );

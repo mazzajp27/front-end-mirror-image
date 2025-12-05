@@ -9,7 +9,7 @@ interface HobbiesIdosoProps {
   data: ContratanteData;
   updateData: (data: Partial<ContratanteData>) => void;
   onPrevious: () => void;
-  onSubmit: () => void;
+  onSubmit: (hobbiesData?: { hobbies?: string[], atividadesFisicas?: any, atividadesSociais?: any, preferencias?: any }) => void;
   isSubmitting: boolean;
 }
 
@@ -136,13 +136,18 @@ const HobbiesIdoso: React.FC<HobbiesIdosoProps> = ({
       return;
     }
 
-    updateData({
+    const hobbiesData = {
       hobbies,
       atividadesFisicas,
       atividadesSociais,
       preferencias
-    });
-    onSubmit();
+    };
+
+    console.log('DEBUG HobbiesIdoso - hobbiesData antes de updateData:', JSON.stringify(hobbiesData, null, 2));
+    updateData(hobbiesData);
+    // Passar os dados diretamente para onSubmit para garantir que sejam enviados
+    console.log('DEBUG HobbiesIdoso - chamando onSubmit com hobbiesData');
+    onSubmit(hobbiesData);
   };
 
   return (

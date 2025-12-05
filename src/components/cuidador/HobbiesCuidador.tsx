@@ -9,7 +9,7 @@ interface HobbiesCuidadorProps {
   data: CuidadorData;
   updateData: (data: Partial<CuidadorData>) => void;
   onPrevious: () => void;
-  onSubmit: () => void;
+  onSubmit: (interesses?: any) => void;
   isSubmitting: boolean;
 }
 
@@ -179,8 +179,11 @@ const HobbiesCuidador: React.FC<HobbiesCuidadorProps> = ({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('DEBUG HobbiesCuidador - interesses antes de updateData:', JSON.stringify(interesses, null, 2));
     updateData({ interesses });
-    onSubmit();
+    // Passar os interesses diretamente para onSubmit para garantir que sejam enviados
+    console.log('DEBUG HobbiesCuidador - chamando onSubmit com interesses');
+    onSubmit(interesses);
   };
 
   return (

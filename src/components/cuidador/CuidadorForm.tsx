@@ -43,10 +43,17 @@ const CuidadorForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (interessesData?: any) => {
     try {
       setIsSubmitting(true);
-      await cuidadorService.cadastrar(formData);
+      // Se interessesData foi passado, atualizar formData antes de enviar
+      const dataToSubmit = interessesData 
+        ? { ...formData, interesses: interessesData }
+        : formData;
+      
+      console.log('DEBUG - formData antes de enviar:', JSON.stringify(dataToSubmit, null, 2));
+      console.log('DEBUG - formData.interesses:', dataToSubmit.interesses);
+      await cuidadorService.cadastrar(dataToSubmit);
       toast.success("Cadastro realizado com sucesso!");
       navigate('/');
     } catch (error: any) {
@@ -66,7 +73,7 @@ const CuidadorForm: React.FC = () => {
       case 3:
         return <QuestionarioCuidador data={formData} updateData={updateFormData} onNext={handleNext} onPrevious={handlePrevious} />;
       case 4:
-        return <HobbiesCuidador data={formData} updateData={updateFormData} onPrevious={handlePrevious} onSubmit={handleSubmit} isSubmitting={isSubmitting} />;
+        return <HobbiesCuidador data={formData} updateData={updateFormData} onPrevious={handlePrevious} onSubmit={(interesses) => handleSubmit(interesses)} isSubmitting={isSubmitting} />;
       default:
         return <DadosCuidador data={formData} updateData={updateFormData} onNext={handleNext} />;
     }
